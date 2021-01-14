@@ -217,9 +217,116 @@
         
           <ul class="copyright">
   
-    <li><strong>本文作者：</strong>Yin</li>
-    <li><strong>本文链接：</strong><a href="http://xuzhimo.top/2020/07/19/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E8%8F%9C%E5%8D%95%E9%A1%B9/index.html" title="http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;07&#x2F;19&#x2F;Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E8%8F%9C%E5%8D%95%E9%A1%B9&#x2F;index.html">http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;07&#x2F;19&#x2F;Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E8%8F%9C%E5%8D%95%E9%A1%B9&#x2F;index.html</a></li>
-    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+     <li><strong>版权声明：</strong>本文作者放弃了版权，大家随意搬运，特此奉上搬运链接：<a href="javascript:;" class="j-carrier-btn">一键打包带走</a></li>
+    <input value="---
+title: Hexo菜单
+date: 2020-07-19 18:28:26
+categories: 
+- Hexo
+tags: 
+- Hexo
+image: /images/theme/baobao.jpg
+excerpt: Hexo添加菜单项。
+---
+
+
+
+Hexo 主题下默认有首页和归档两个菜单，我们还可以开启其他菜单项，比如分类、标签、关于
+
+首先打开主题下的配置文件_config.yml，然后搜索menu找到如下配置项，将about、tags、categories前的#号去掉，就开启了关于、标签和分类标签，当然还有其他菜单项也可以开启
+
+
+
+```
+---
+Menu Settings
+---
+
+When running the site in a subdirectory (e.g. domain.tld/blog), remove the leading slash from link value (/archives -&gt; archives).
+
+Usage: `Key: /link/ || icon`
+Key is the name of menu item. If the translation for this item is available, the translated text will be loaded, otherwise the Key name will be used. Key is case-senstive.
+Value before `||` delimiter is the target link.
+Value after `||` delimiter is the name of FontAwesome icon. If icon (with or without delimiter) is not specified, question icon will be loaded.
+
+External url should start with http:// or https://
+
+menu:
+  home: / || home
+  about: /about/ || user
+  tags: /tags/ || tags
+  categories: /categories/ || th
+  archives: /archives/ || archive
+  schedule: /schedule/ || calendar
+  sitemap: /sitemap.xml || sitemap
+  commonweal: /404/ || heartbeat
+```
+
+
+
+重新生成部署后，可以看到新增的菜单项，但是单击后会报如下错误
+
+```
+Cannot GET /about/
+Cannot GET /tags/
+Cannot GET /categories/
+```
+
+
+
+这是因为你还需运行如下命令新建相关页面
+
+```
+hexo new page &#34;about&#34;
+hexo new page &#34;tags&#34;
+hexo new page &#34;categories&#34;
+```
+
+
+
+运行结果如下，会再source文件下创建about、tags、categories文件夹，每个文件夹下还会创建一个index.md文件表示关于、标签页分类页面，编辑这三个MarkDown文件可以自定义这三个页面的内容
+
+```
+D:\hexo\blog&gt;hexo new page &#34;about&#34;
+INFO  Created: D:\hexo\blog\source\about\index.md
+
+D:\hexo\blog&gt;hexo new page &#34;tags&#34;
+INFO  Created: D:\hexo\blog\source\tags\index.md
+
+D:\hexo\blog&gt;hexo new page &#34;categories&#34;
+INFO  Created: D:\hexo\blog\source\categories\index.md
+```
+
+
+还差最后一步，打开各页面对应的index.md文件，编辑如下内容，title和date是默认生成的，增加type即可
+
+
+
+```
+---
+title: about
+date: 2019-06-25 19:16:17
+type: &#34;about&#34;
+---
+
+---
+title: about
+date: 2019-06-25 19:16:17
+type: &#34;tags&#34;
+---
+
+---
+title: about
+date: 2019-06-25 19:16:17
+type: &#34;categories&#34;
+---
+
+```
+
+
+
+重新生成和部署即可看到效果
+" class="j-carrier-data carrier-data">
   
 </ul>
         

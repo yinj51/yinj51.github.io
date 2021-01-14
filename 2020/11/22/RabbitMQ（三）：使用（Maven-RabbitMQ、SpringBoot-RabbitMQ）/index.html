@@ -237,9 +237,846 @@
         
           <ul class="copyright">
   
-    <li><strong>本文作者：</strong>Yin</li>
-    <li><strong>本文链接：</strong><a href="http://xuzhimo.top/2020/11/22/RabbitMQ%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E4%BD%BF%E7%94%A8%EF%BC%88Maven-RabbitMQ%E3%80%81SpringBoot-RabbitMQ%EF%BC%89/index.html" title="http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;11&#x2F;22&#x2F;RabbitMQ%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E4%BD%BF%E7%94%A8%EF%BC%88Maven-RabbitMQ%E3%80%81SpringBoot-RabbitMQ%EF%BC%89&#x2F;index.html">http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;11&#x2F;22&#x2F;RabbitMQ%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E4%BD%BF%E7%94%A8%EF%BC%88Maven-RabbitMQ%E3%80%81SpringBoot-RabbitMQ%EF%BC%89&#x2F;index.html</a></li>
-    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+     <li><strong>版权声明：</strong>本文作者放弃了版权，大家随意搬运，特此奉上搬运链接：<a href="javascript:;" class="j-carrier-btn">一键打包带走</a></li>
+    <input value="---
+title: RabbitMQ（三）：使用（Maven-RabbitMQ、SpringBoot-RabbitMQ）
+date: 2020-11-22 19:28:26
+categories: 
+- RabbitMQ
+tags: 
+- JAVA
+- 消息队列
+- RabbitMQ
+- SpringBoot
+image: /images/theme/地貌.jpg
+excerpt: RabbitMQ在Maven-RabbitMQ以及SpringBoot-RabbitMQ 多种模式的使用。
+toc: true
+---
+
+
+
+# Maven-RabbitMQ使用
+
+## 创建Maven工程
+
+添加依赖
+
+```
+&lt;dependency&gt;
+     &lt;groupId&gt;com.rabbitmq&lt;/groupId&gt;
+     &lt;artifactId&gt;amqp-client&lt;/artifactId&gt;
+     &lt;version&gt;5.5.1&lt;/version&gt;
+&lt;/dependency&gt;
+```
+
+## 生产者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitProvider {
+
+    //队列名称
+    private static final String QUEUE_NAME = &#34;simple_queue&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        //声明队列
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+
+        String message = &#34;今天天气好晴朗&#34;;
+        //发送消息
+        channel.basicPublish(&#34;&#34;,QUEUE_NAME,null,message.getBytes());
+        System.out.println(&#34;发送消息成功&#34;);
+
+    }
+}
+
+```
+
+## 消费者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer {
+
+    private static final String QUEUE_NAME = &#34;simple_queue&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+
+        //处理消息
+        DeliverCallback deliverCallback = (consumerTag, delivery) -&gt; {
+            String message = new String(delivery.getBody(), &#34;UTF-8&#34;);
+            System.out.println(&#34; [x] Received &#39;&#34; + message + &#34;&#39;&#34;);
+        };
+        //监听对列
+        channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -&gt; { });
+
+        
+    }
+
+}
+
+```
+
+### 非Lambda
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer {
+
+    private static final String QUEUE_NAME = &#34;simple_queue&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;接收到的消息：&#34;+message);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,true,consumer);
+
+
+    }
+
+}
+
+```
+
+
+
+# 消息队列的收发模式
+
+## 简单队列模式
+
+默认情况下，是简单队列模式，两个消费者交替接收消息
+
+## work模式——能者多劳
+
+一次只处理一个消息，待消息处理完后手动回复
+
+### 改变消费者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer1 {
+
+    private static final String QUEUE_NAME = &#34;simple_queue&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        channel.basicQos(1);//一次只处理一个消息,避免消息堆积
+
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;消费者1接收到的消息：&#34;+message);
+                //手动回复 ：处理完成
+                channel.basicAck(envelope.getDeliveryTag(),false);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,false,consumer);//不自动回复
+
+
+    }
+
+}
+
+```
+
+## 发布订阅模式
+
+将消息发送给交换机，交换机绑定多个队列，每个队列都能得到该消息。
+
+### 改变生成者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitProvider {
+
+    private static final String QUEUE_NAME = &#34;simple_queue&#34;;
+
+    private static final String EXCHANGE_NAME=&#34;fanout_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+
+        //声明交换机
+        channel.exchangeDeclare(EXCHANGE_NAME,&#34;fanout&#34;);
+
+        for (int i = 1; i &lt;= 100; i++) {
+            String message = &#34;message&#34;+i;
+//            channel.basicPublish(&#34;&#34;,QUEUE_NAME,null,message.getBytes());
+            channel.basicPublish(EXCHANGE_NAME,&#34;&#34;,null,message.getBytes());
+            System.out.println(&#34;发送第&#34;+i+&#34;个消息成功&#34;);
+        }
+        
+    }
+
+}
+```
+
+### 改变消费者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer1 {
+
+    //定义队列名字
+    private static final String QUEUE_NAME = &#34;fanout_queue1&#34;;
+    //定义交换机名字
+    private static final String EXCHANGE_NAME=&#34;fanout_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        channel.basicQos(1);//一次只处理一个消息,避免消息堆积
+        //声明队列
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+        //将队列绑定在交换机上
+        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,&#34;&#34;);
+
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;消费者1接收到的消息：&#34;+message);
+                //手动回复 ：处理完成
+                channel.basicAck(envelope.getDeliveryTag(),false);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,false,consumer);//不自动回复
+
+
+    }
+
+}
+
+```
+
+
+
+## 路由模式
+
+修改交换机类型为direct
+
+### 生产者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitProvider {
+
+
+    private static final String EXCHANGE_NAME=&#34;direct_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+
+        //声明交换机-- 改变交换机类型为“direct”
+        channel.exchangeDeclare(EXCHANGE_NAME,&#34;direct&#34;);
+        //指明路由key
+        channel.basicPublish(EXCHANGE_NAME,&#34;nba&#34;,null,&#34;NBA Message&#34;.getBytes());
+        channel.basicPublish(EXCHANGE_NAME,&#34;cba&#34;,null,&#34;cba Message&#34;.getBytes());
+        System.out.println(&#34;发送消息成功&#34;);
+    }
+
+}
+
+```
+
+### 消费者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer1 {
+
+    //定义队列名字
+    private static final String QUEUE_NAME = &#34;direct_queue1&#34;;
+    //定义交换机名字
+    private static final String EXCHANGE_NAME=&#34;direct_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        channel.basicQos(1);//一次只处理一个消息,避免消息堆积
+        //声明队列
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+        //将队列绑定在交换机上,并指明路由key
+        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,&#34;nba&#34;);
+        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,&#34;cba&#34;);
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;消费者1接收到的消息：&#34;+message);
+                //手动回复 ：处理完成
+                channel.basicAck(envelope.getDeliveryTag(),false);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,false,consumer);//不自动回复
+    }
+}
+
+```
+
+##通配符模式
+
+修改交换机类型为topic
+
+### 生产者
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitProvider {
+
+
+    private static final String EXCHANGE_NAME=&#34;topic_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+
+        //声明交换机-- 改变交换机类型为“direct”
+        channel.exchangeDeclare(EXCHANGE_NAME,&#34;topic&#34;);
+        //指明路由key
+        channel.basicPublish(EXCHANGE_NAME,&#34;product.add&#34;,null,&#34;添加商品&#34;.getBytes());
+        channel.basicPublish(EXCHANGE_NAME,&#34;product.del&#34;,null,&#34;删除商品&#34;.getBytes());
+        channel.basicPublish(EXCHANGE_NAME,&#34;product.del.other&#34;,null,&#34;删除商品!!&#34;.getBytes());
+        System.out.println(&#34;发送消息成功&#34;);
+
+
+    }
+
+}
+```
+
+### 消费者1
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer1 {
+
+    //定义队列名字
+    private static final String QUEUE_NAME = &#34;topic_queue1&#34;;
+    //定义交换机名字
+    private static final String EXCHANGE_NAME=&#34;topic_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        channel.basicQos(1);//一次只处理一个消息,避免消息堆积
+        //声明队列
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+        //将队列绑定在交换机上
+        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,&#34;product.*&#34;);
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;消费者1接收到的消息：&#34;+message);
+                //手动回复 ：处理完成
+                channel.basicAck(envelope.getDeliveryTag(),false);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,false,consumer);//不自动回复
+
+
+    }
+
+}
+
+```
+
+### 消费者2
+
+```java
+package com.qf.rabbitmq;
+
+import com.rabbitmq.client.*;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
+public class RabbitConsumer2 {
+
+    private static final String QUEUE_NAME = &#34;topic_queue2&#34;;
+    private static final String EXCHANGE_NAME=&#34;topic_exchange&#34;;
+
+    public static void main(String[] args) throws IOException, TimeoutException {
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        connectionFactory.setHost(&#34;10.0.0.181&#34;);
+        connectionFactory.setPort(5672);
+        connectionFactory.setVirtualHost(&#34;vh1&#34;);
+        connectionFactory.setUsername(&#34;test1&#34;);
+        connectionFactory.setPassword(&#34;123456&#34;);
+
+        Connection connection = connectionFactory.newConnection();
+
+        Channel channel = connection.createChannel();
+        channel.basicQos(1);//一次只处理一个消息,避免消息堆积
+
+        channel.queueDeclare(QUEUE_NAME,false,false,false,null);
+        channel.queueBind(QUEUE_NAME,EXCHANGE_NAME,&#34;product.#&#34;);
+
+        //处理消息
+        Consumer consumer = new DefaultConsumer(channel){
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body,&#34;utf-8&#34;);
+                System.out.println(&#34;消费者2接收到的消息：&#34;+message);
+                //手动回复 ：处理完成
+                channel.basicAck(envelope.getDeliveryTag(),false);
+            }
+        };
+        //监听队列
+        channel.basicConsume(QUEUE_NAME,false,consumer);
+
+
+    }
+
+}
+
+```
+
+
+
+# SpringBoot-RabbitMQ 使用
+
+## 生产者
+
+创建一个名为 `spring-boot-amqp-provider` 的生产者项目
+
+### application.yml
+
+```yaml
+spring:
+  application:
+    name: spring-boot-amqp
+  rabbitmq:
+    host: 192.168.75.133
+    port: 5672
+    username: rabbit
+    password: 123456
+```
+
+### 创建队列配置
+
+```java
+package com.duo.spring.boot.amqp.config;
+
+import org.springframework.amqp.core.Queue;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 队列配置
+ * &lt;p&gt;Title: RabbitMQConfiguration&lt;/p&gt;
+ * &lt;p&gt;Description: &lt;/p&gt;
+ */
+@Configuration
+public class RabbitMQConfiguration {
+    @Bean
+    public Queue queue() {
+        return new Queue(&#34;helloRabbit&#34;);
+    }
+}
+```
+
+### 创建消息提供者
+
+```java
+package com.duo.spring.boot.amqp.provider;
+
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+/**
+ * 提供者
+ * &lt;p&gt;Title: HelloRabbitProvider&lt;/p&gt;
+ * &lt;p&gt;Description: &lt;/p&gt;
+ */
+@Component
+public class HelloRabbitProvider {
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    public void send() {
+        String context = &#34;hello&#34; + new Date();
+        System.out.println(&#34;Provider: &#34; + context);
+        amqpTemplate.convertAndSend(&#34;helloRabbit&#34;, context);
+    }
+}
+```
+
+### 创建测试用例
+
+```java
+package com.duo.spring.boot.amqp.test;
+
+import com.duo.spring.boot.amqp.Application;
+import com.duo.spring.boot.amqp.provider.HelloRabbitProvider;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+public class AmqpTest {
+    @Autowired
+    private HelloRabbitProvider helloRabbitProvider;
+
+    @Test
+    public void testSender() {
+        for (int i = 0; i &lt; 10; i++) {
+            helloRabbitProvider.send();
+        }
+    }
+}
+```
+
+## 消费者
+
+创建一个名为 `spring-boot-amqp-consumer` 的消费者项目
+
+### application.yml
+
+```yaml
+spring:
+  application:
+    name: spring-boot-amqp-consumer
+  rabbitmq:
+    host: 192.168.75.133
+    port: 5672
+    username: rabbit
+    password: 123456
+```
+
+### 创建消息消费者
+
+```java
+package com.duo.spring.boot.amqp.consumer;
+
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public class HelloRabbitConsumer {
+    @RabbitListener(queues = &#34;helloRabbit&#34;)
+    public void process(String message) {
+        System.out.println(&#34;Consumer: &#34; + message);
+    }
+}
+```
+
+# 交换机模式
+
+## 编辑配置文件
+
+```java
+package com.qf.rabbitmqdemo.config;
+
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RabbitConfiguration {
+
+    @Bean
+    public Queue queue(){
+        return new Queue(&#34;simple_queue&#34;);
+    }
+
+
+    @Bean
+    public FanoutExchange getFanoutExchange(){
+        return  new FanoutExchange(&#34;fanout_exchange_new&#34;);
+    }
+
+    @Bean
+    public Binding getBinding(Queue getQueue,FanoutExchange getFanoutExchange){
+        return BindingBuilder.bind(getQueue).to(getFanoutExchange);
+    }
+
+
+}
+
+```
+
+
+
+## 生产者
+
+```java
+package com.qf.rabbitmqdemo;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ExchangeProvider {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+
+    public void send(){
+        rabbitTemplate.convertAndSend(&#34;fanout_exchange_new&#34;,&#34;&#34;,&#34;交换机模式消息&#34;);
+    }
+
+
+}
+
+```
+
+# 通配符模式
+
+## 修改配置文件
+
+```java
+    @Bean
+    public TopicExchange getTopicExchange(){
+        return new TopicExchange(&#34;topic_exchange_new&#34;);
+    }
+
+    @Bean
+    public Binding getBinding2(Queue getQueue,TopicExchange getTopicExchange){
+        return BindingBuilder.bind(getQueue).to(getTopicExchange).with(&#34;product.*&#34;);
+    }
+
+```
+
+## 生产者
+
+```java
+   public void send(){
+        rabbitTemplate.convertAndSend(&#34;topic_exchange_new&#34;,&#34;product.add&#34;,&#34;topic模式消息&#34;);
+    }
+```
+
+
+
+" class="j-carrier-data carrier-data">
   
 </ul>
         

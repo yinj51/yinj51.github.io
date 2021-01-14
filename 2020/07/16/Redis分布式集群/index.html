@@ -295,9 +295,495 @@
         
           <ul class="copyright">
   
-    <li><strong>本文作者：</strong>Yin</li>
-    <li><strong>本文链接：</strong><a href="http://xuzhimo.top/2020/07/16/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/index.html" title="http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;07&#x2F;16&#x2F;Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4&#x2F;index.html">http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;07&#x2F;16&#x2F;Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4&#x2F;index.html</a></li>
-    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+     <li><strong>版权声明：</strong>本文作者放弃了版权，大家随意搬运，特此奉上搬运链接：<a href="javascript:;" class="j-carrier-btn">一键打包带走</a></li>
+    <input value="---
+title: Redis分布式集群（解决高性能问题）
+date: 2020-07-16 17:19:23
+categories: 
+- Redis
+tags: 
+- JAVA
+- Redis
+- Linux
+- 高性能
+- Jedis
+image: /images/theme/山水2.jpg
+excerpt: Redis分布式集群，解决高性能问题。
+---
+
+# Redis分布式集群
+
+![img](wps1.jpg) 
+
+# 1. 为什么需要配置Redis分布式集群？-解决高性能问题
+
+首先，Redis支持配置主从，实现读写分离，配置一主多从+哨兵机制，实现主机挂了，可以在从机中选举一台作为主机，解决单点故障问题。但是依然会面临下面的问题：
+
+1，高并发，虽然Redis官方数据是10万/秒，但是如果我们的应用需要达到100万/秒怎么办？
+
+2，高容量，一般服务器的内存是在16-256G内存之间，如果要达到500G以上的存储容量，怎么办？
+
+3，网络流量的问题，假设一台机器的网卡是千兆网卡，当我们的应用网络流量超过这个上限怎么办？ 这些都是实际会面临的问题，那么就需要我们采用另一种方案，Redis分布式集群。
+
+# **2.** 搭建Redis分布式集群简介
+
+Redis的集群架构图如下：
+
+![img](wps2.png) 
+
+**注意：以上的集群架构是Redis3.0的新特性（RedisCluster）**
+
+Client与redis节点直接连接,不需要中间proxy层
+
+​	redis-cluster把所有的物理节点映射到[0-16383]slot（插槽）上,cluster 负责维护，每个节点负责保存部分的插槽信息
+
+​	所有的redis节点彼此互联(PING-PONG机制),内部使用gossip二进制协议优化传输数据*
+
+​	节点的失效检测是通过集群中超过半数的节点检测失效时才生效. 
+
+算法说明（了解即可）：
+
+问题：Redis 集群中内置了 16384 个哈希槽，那他是如何决定将key放入哪个插槽的？
+
+当Redis 集群中放置一个 key-value 时，redis 先对 key 使用 crc16 算法算出一个结果，然后把结果对 16384 求余数，这样每个 key 都会对应一个编号在 0-16383 之间的哈希槽，这样就可以确定数据应该保存到哪个插槽，从而确定应该保存到哪个节点
+
+# 3. 搭建Redis分布式
+
+真实的情况，应该最少是三台实验的情况，一台，用不同端口来区分操作步骤如下：
+
+1、在redis3目录下，复制三份bin
+
+2、创建redis_cluster 来保存三份bin6379,bin6380,bin638
+
+​	①，配置集群之前：注意要删除每个reids目录下dump.rdb等相关数据文件 修改redis.conf，配置集群信息
+
+​	②、开启集群，cluster-enabled yes
+
+3、指定集群的配置文件，cluster-config-file &#34;nodes-.conf&#34;
+
+这几个**就是修改为自己的端口，每个配置文件要不一样**
+
+![img](wps3.jpg) 
+
+启动每个redis，查看启动的结果
+
+![img](wps4.jpg)
+
+***
+
+4、用redis-trib.rb搭建集群
+
+因为redis-trib.rb是用Ruby实现的Redis集群管理工具，所以我们需要先安装ruby的环境
+
+​	4.1、安装rubyyum -y install zlib ruby rubygems
+
+​	4.2、安装rubygems的redis依赖gem install -l redis-3.3.0.gem 4.3、安装好依赖的环境之后，我们就可以来使用脚本命令了
+
+**注意：搭建集群前，需要先将各节点的认证密码先注释掉，这样才能互联**
+
+**注意**：此ruby脚本文件在我们的**解压缩目录**src下 
+
+![img](wps5.jpg) 
+
+```
+./redis-trib.rb create --replicas 0 192.168.10.167:6379 192.168.10.167:6380 192.168.10.167:6381
+
+--replicas 0：指定了从数据的数量为0
+```
+
+观察提示信息，查看集群的分配结果
+
+![img](wps6.jpg) 
+
+**查看集群的状态**
+
+通过客户端输入以下命令：
+
+cluster nodes：这个命令可以查看插槽的分配情况整个Redis提供了16384个插槽，./redis-trib.rb 脚本实现了是将16384个插槽平均分配给了N个节点。
+
+ **测试集群：**
+
+使用任意一个redis客户端进行数据的存储和获取，观察结果redis-cli 只在当前连接的节点上操作redis-cli -c 会自动帮我们调整到合适的节点上操作
+
+ **经验分享：**
+
+如果重新启动集群报以下错误
+
+```
+[ERR] Node 192.168.10.137:6379 is not empty. Either the node already knows other nodes (check with CLUSTER NODES) or contains some key in database 0.
+```
+
+**处理办法：**
+
+需要清除杀掉redis实例，然后删除每个节点下的临时数据文件appendonly.aof，dump.rdb，nodes-6379.conf，然后再重新启动redis实例即可启动集群。关闭进程，要kill才真正有效 
+
+**血的经验教训：**
+
+关于彼此之间实现互联，需要注意的地方：注意：为了保证集群可以搭建成功，需要先将密码去掉，搭建成功之后，再加回来即可应该是把protected-mode修改为no，而不是注释掉
+
+![img](wps7.jpg) 
+
+# **4.** 搭建高可用的集群（分布式+集群）
+
+问题：上述的集群如果有一个节点挂了，怎么办？
+
+集群中的故障检查机制
+
+1、 当集群中的节点超过半数认为该目标节点疑似下线，那么该节点就会被标记为**下线**；
+
+2、 当集群中的任何一个节点下线，就会导致插槽区有空档，不完整，那么该集群将不可用；
+
+ **解决方案：**在Redis集群中可以使用**主从模式**实现某一个节点的高可用
+
+**目标：**我们来搭建一个三主，三备的集群
+
+第一：先要将相关的服务停掉，清楚掉相关的文件（**集群配置文件nodes**），
+
+第二：复制多三台实例，bin6382,bin6383,bin6384
+
+第三：启动所有的服务实例
+
+![img](wps8.jpg)
+
+ ![img](wps9.jpg) 
+
+第二：创建新集群，且设置为一主一备
+
+```
+./redis-trib.rb create --replicas 1 192.168.10.167:6379 192.168.10.167:6380 192.168.10.167:6381 192.168.10.167:6382 192.168.10.167:6383 192.168.10.167:6384
+```
+
+![img](wps10.jpg) 
+
+第三：测试主机挂了之后，集群是否可用中间的转换大概需要几秒钟才能反应过来第四：重新恢复失效的节点
+
+![img](wps11.jpg) 
+
+# **5.** Java连接redis集群-Jedis版本
+
+```
+public class  JedisTest {	
+    @Test	
+    public void set(){		
+        Set&lt;HostAndPort&gt; nodes = new  HashSet&lt;HostAndPort&gt;();		
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6379));		
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6380));		
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6381));	
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6382));		
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6383));
+        nodes.add(new HostAndPort(&#34;192.168.10.167&#34;, 6384));		
+        JedisCluster jCluster = new JedisCluster(nodes);		
+        String result = jCluster.set(&#34;kebi&#34;, &#34;神一样的男人&#34;);	
+        System.out.println(result);		
+        String kebi = jCluster.get(&#34;kebi&#34;);		
+        System.out.println(kebi);	
+	}
+}
+```
+
+如需要设置密码，请换一另一个构造方法来构造JedisCluster
+
+# **6.** Spring整合Jedis
+
+配置spring配置文件
+
+```
+&lt;!-- 配置redis客户端集群版 --&gt;	
+&lt;bean id=&#34;jedisCluster&#34; class=&#34;redis.clients.jedis.JedisCluster&#34;&gt;	
+    &lt;constructor-arg&gt;		
+    &lt;set&gt;			
+        &lt;bean class=**&#34;redis.clients.jedis.HostAndPort&#34;&gt;		
+            &lt;constructor-arg name=&#34;host&#34; value=&#34;192.168.10.167&#34; /&gt;	
+            &lt;constructor-arg name=&#34;port&#34; value=&#34;6379&#34; /&gt;		
+        &lt;/bean&gt;
+        ......		
+    &lt;/set&gt;	
+&lt;/constructor-arg&gt;
+&lt;/bean&gt; 
+编写单元测试
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations=&#34;classpath:spring.xml&#34;)
+public class JedisClusterTest {
+        @Autowired	
+        private JedisCluster jedisCluster; 
+        @Test	
+        public void set() {		
+            jedisCluster.set(&#34;kebi&#34;, &#34;good&#34;);		
+            System.out.println(jedisCluster.get(&#34;kebi&#34;));	
+		}
+} 
+```
+
+此处，我们已经完全可以后端的redis实现通信
+
+# **7.** Spring-data-redis整合redis
+
+###  **1).引入依赖**
+
+```
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;redis.clients&lt;/groupId&gt;
+        &lt;artifactId&gt;jedis&lt;/artifactId&gt;
+        &lt;version&gt;2.9.0&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.12&lt;/version&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.data&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-data-redis&lt;/artifactId&gt;
+        &lt;version&gt;1.8.8.RELEASE&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+        &lt;version&gt;4.3.8.RELEASE&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+```
+
+###  **2). 写配置文件**
+
+配置连接池  连接工厂  模板对象
+
+​	连接池：  jedis 提供
+
+​	连接工厂： spring提供
+
+​	模板对象： spring对象  用来操作redis
+
+```
+&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+&lt;beans xmlns=&#34;http://www.springframework.org/schema/beans&#34;
+       xmlns:xsi=&#34;http://www.w3.org/2001/XMLSchema-instance&#34;
+       xsi:schemaLocation=&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&#34;&gt;
+
+    &lt;!-- 配置redis连接池对象 --&gt;
+    &lt;bean id=&#34;poolConfig&#34; class=&#34;redis.clients.jedis.JedisPoolConfig&#34;&gt;
+        &lt;!-- 最大空闲数 --&gt;
+        &lt;property name=&#34;maxIdle&#34; value=&#34;50&#34; /&gt;
+        &lt;!-- 最大连接数 --&gt;
+        &lt;property name=&#34;maxTotal&#34; value=&#34;100&#34; /&gt;
+        &lt;!-- 最大等待时间 --&gt;
+        &lt;property name=&#34;maxWaitMillis&#34; value=&#34;20000&#34; /&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 配置redis连接工厂 --&gt;
+    &lt;bean id=&#34;connectionFactory&#34;
+          class=&#34;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&#34;&gt;
+        &lt;!-- 连接池配置 --&gt;
+        &lt;property name=&#34;poolConfig&#34; ref=&#34;poolConfig&#34; /&gt;
+        &lt;!-- 连接主机 --&gt;
+        &lt;property name=&#34;hostName&#34; value=&#34;192.168.2.147&#34; /&gt;
+        &lt;!-- 端口 --&gt;
+        &lt;property name=&#34;port&#34; value=&#34;6379&#34; /&gt;
+        &lt;!-- 密码 --&gt;
+        &lt;property name=&#34;password&#34; value=&#34;shizelei&#34; /&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 配置redis模板对象 --&gt;
+    &lt;bean class=&#34;org.springframework.data.redis.core.RedisTemplate&#34;&gt;
+        &lt;!-- 配置连接工厂 --&gt;
+        &lt;property name=&#34;connectionFactory&#34; ref=&#34;connectionFactory&#34; /&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;
+```
+
+### **3).在程序中使用RedisTemplate模板对象**
+
+1）注入RedisTemplate
+
+```
+/*
+使用spring data redis 提供的模板对象 来操作redis
+ */
+@Autowired
+private RedisTemplate redisTemplate;
+```
+
+2)使用
+
+![image](1.png)
+
+```
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = &#34;classpath:redis.xml&#34;)
+public class TestRedis {
+    /*
+    使用spring data redis 提供的模板对象 来操作redis
+     */
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Test
+    public void testSet(){
+        ValueOperations ops = redisTemplate.opsForValue();
+        ops.set(&#34;20190801target&#34;,&#34;10000&#34;);
+        System.out.println(ops.get(&#34;20190801target&#34;));
+    }
+}
+```
+
+此时我们发现。默认情况下使用spring-data-redis工具存入到redis中的键值都被序列化了。
+
+我们发现  默认使用的是Jdk序列化器对键值对进行序列化
+
+### **4).全局配置序列化器**
+
+修改redis.xml配置文件
+
+```
+&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;
+&lt;beans xmlns=&#34;http://www.springframework.org/schema/beans&#34;
+       xmlns:xsi=&#34;http://www.w3.org/2001/XMLSchema-instance&#34;
+       xsi:schemaLocation=&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&#34;&gt;
+    &lt;!-- 配置redis连接池对象 --&gt;
+    &lt;bean id=&#34;poolConfig&#34; class=&#34;redis.clients.jedis.JedisPoolConfig&#34;&gt;
+        &lt;!-- 最大空闲数 --&gt;
+        &lt;property name=&#34;maxIdle&#34; value=&#34;50&#34; /&gt;
+        &lt;!-- 最大连接数 --&gt;
+        &lt;property name=&#34;maxTotal&#34; value=&#34;100&#34; /&gt;
+        &lt;!-- 最大等待时间 --&gt;
+        &lt;property name=&#34;maxWaitMillis&#34; value=&#34;20000&#34; /&gt;
+    &lt;/bean&gt;
+    &lt;bean id=&#34;stringRedisSerializer&#34; class=&#34;org.springframework.data.redis.serializer.StringRedisSerializer&#34;/&gt;
+
+    &lt;!-- 配置redis连接工厂 --&gt;
+    &lt;bean id=&#34;connectionFactory&#34;
+          class=&#34;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&#34;&gt;
+        &lt;!-- 连接池配置 --&gt;
+        &lt;property name=&#34;poolConfig&#34; ref=&#34;poolConfig&#34; /&gt;
+        &lt;!-- 连接主机 --&gt;
+        &lt;property name=&#34;hostName&#34; value=&#34;192.168.2.147&#34; /&gt;
+        &lt;!-- 端口 --&gt;
+        &lt;property name=&#34;port&#34; value=&#34;6379&#34; /&gt;
+        &lt;!-- 密码 --&gt;
+        &lt;property name=&#34;password&#34; value=&#34;java1902&#34; /&gt;
+    &lt;/bean&gt;
+
+    &lt;!-- 配置redis模板对象 --&gt;
+    &lt;bean class=&#34;org.springframework.data.redis.core.RedisTemplate&#34;&gt;
+        &lt;!-- 配置连接工厂 --&gt;
+        &lt;property name=&#34;connectionFactory&#34; ref=&#34;connectionFactory&#34; /&gt;
+        &lt;!--配置序列化器--&gt;
+        &lt;property name=&#34;keySerializer&#34; ref=&#34;stringRedisSerializer&#34;/&gt;
+        &lt;property name=&#34;valueSerializer&#34; ref=&#34;stringRedisSerializer&#34;/&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+```
+
+### **5).局部配置序列化器**
+
+​	当都是用String序列化器，我们发现对于Java对象的序列化，该序列化器无能为力，因此使用局部配置，指明当前的序列化器  JdkSerializationRedisSerializer  能够对Java对象进行序列化
+
+```
+@Test
+public void testSerializer() throws IllegalAccessException, InstantiationException {
+    Student stu = new Student();
+    stu.setName(&#34;小王&#34;);
+    stu.setAge(20);
+    //修改序列化器，局部生效    redisTemplate.setValueSerializer(JdkSerializationRedisSerializer.class.newInstance());
+    redisTemplate.opsForValue().set(&#34;stu:1&#34;,stu);
+    Object stu1 = redisTemplate.opsForValue().get(&#34;stu:1&#34;);
+    System.out.println(stu1);
+}
+```
+
+注意：
+
+​	string类型来说，也可以实现数值相加的效果
+
+结论：
+
+​	key使用string序列化器，value使用jdk序列化器
+
+# **8.** 配置连接池对象
+
+```
+&lt;!-- 配置redis连接池对象 --&gt;	
+&lt;bean id=&#34;poolConfig&#34; class=&#34;redis.clients.jedis.JedisPoolConfig&#34;&gt;		
+    &lt;!-- 最大空闲数 --&gt;		
+    &lt;property name=&#34;maxIdle&#34; value=&#34;50&#34; /&gt;		
+    &lt;!-- 最大连接数 --&gt;		
+    &lt;property name=&#34;maxTotal&#34; value=&#34;100&#34; /&gt;	
+    &lt;!-- 最大等待时间 --&gt;		
+    &lt;property name=&#34;maxWaitMillis&#34; value=&#34;20000&#34; /&gt;	
+&lt;/bean&gt;
+```
+
+# **9.** Redis集群配置
+
+```
+&lt;!-- Redis集群配置 --&gt;	
+&lt;bean id= &#34;redisClusterConfiguration&#34;  	class= &#34;org.springframework.data.redis.connection.RedisClusterConfiguration&#34; &gt;	
+    &lt;property name= &#34;clusterNodes&#34; &gt;		
+        &lt;set&gt;		
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;	
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;		
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6379&#34; /&gt;		
+            &lt;/bean&gt;			
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;		
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;		
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6380&#34; /&gt;			
+            &lt;/bean&gt;			
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;	
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;			
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6381&#34; /&gt;			
+            &lt;/bean&gt;		
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;	
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;		
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6382&#34; /&gt;		
+            &lt;/bean&gt;			
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;	
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;		
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6383&#34; /&gt;			
+            &lt;/bean&gt;			
+            &lt;bean class= &#34;org.springframework.data.redis.connection.RedisNode&#34; &gt;		
+                &lt;constructor-arg name= &#34;host&#34;  value= &#34;192.168.10.172&#34; /&gt;		
+                &lt;constructor-arg name= &#34;port&#34;  value= &#34;6384&#34; /&gt;		
+            &lt;/bean&gt;		
+        &lt;/set&gt;	
+    &lt;/property&gt;	
+&lt;/bean&gt;
+```
+
+# **10.** 配置连接工厂
+
+```
+&lt;!-- 配置redis连接工厂 --&gt;	
+&lt;bean id= &#34;connectionFactory&#34; 		class= &#34;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&#34; &gt;	
+    &lt;constructor-arg name= &#34;poolConfig&#34;  ref= &#34;poolConfig&#34; /&gt;	
+    &lt;constructor-arg name= &#34;clusterConfig&#34;  ref= &#34;redisClusterConfiguration&#34; /&gt;	
+    &lt;!-- 密码 --&gt;	
+    &lt;property name= &#34;password&#34;  value= &#34;huangguizhao&#34;  /&gt;
+&lt;/bean&gt;
+```
+
+# **11.** 配置模板
+
+```
+&lt;!-- 配置redis模板对象 --&gt;	
+&lt;bean id= &#34;redisTemplate&#34;  class= &#34;org.springframework.data.redis.core.RedisTemplate&#34; &gt;	
+    &lt;!-- 配置连接工厂 --&gt;	
+    &lt;property name= &#34;connectionFactory&#34;  ref= &#34;connectionFactory&#34;  /&gt; 
+    &lt;property name= &#34;keySerializer&#34;  ref= &#34;stringRedisSerializer&#34;  /&gt; 
+&lt;/bean&gt;
+```
+
+# **12.** 使用模板对象
+
+直接使用redisTemplate对象，跟操作单机无差别
+
+总结
+
+![img](wps12.jpg) 
+
+ " class="j-carrier-data carrier-data">
   
 </ul>
         

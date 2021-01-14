@@ -218,9 +218,83 @@
         
           <ul class="copyright">
   
-    <li><strong>本文作者：</strong>Yin</li>
-    <li><strong>本文链接：</strong><a href="http://xuzhimo.top/2020/11/21/RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%AE%89%E8%A3%85%EF%BC%88%E5%9F%BA%E4%BA%8EDocker%EF%BC%89/index.html" title="http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;11&#x2F;21&#x2F;RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%AE%89%E8%A3%85%EF%BC%88%E5%9F%BA%E4%BA%8EDocker%EF%BC%89&#x2F;index.html">http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;11&#x2F;21&#x2F;RabbitMQ%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E5%AE%89%E8%A3%85%EF%BC%88%E5%9F%BA%E4%BA%8EDocker%EF%BC%89&#x2F;index.html</a></li>
-    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+     <li><strong>版权声明：</strong>本文作者放弃了版权，大家随意搬运，特此奉上搬运链接：<a href="javascript:;" class="j-carrier-btn">一键打包带走</a></li>
+    <input value="---
+title: RabbitMQ（二）：安装（基于Docker）
+date: 2020-11-21 19:28:26
+categories: 
+- RabbitMQ
+tags: 
+- JAVA
+- 消息队列
+- RabbitMQ
+image: /images/theme/晴空.jpg
+excerpt: RabbitMQ基于Docker的安装配置。
+
+---
+
+
+
+# RabbitMQ 安装
+
+## 概述
+
+我们基于 Docker 来安装 RabbitMQ
+
+## docker-compose.yml
+
+```
+version: &#39;3.1&#39;
+services:
+  rabbitmq:
+    restart: always
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      TZ: Asia/Shanghai
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: 123456
+    volumes:
+      - ./data:/var/lib/rabbitmq
+```
+
+## RabbitMQ WebUI
+
+### 访问地址
+
+http://ip:15672
+
+### 首页
+
+![](1.png)
+
+### Global counts
+
+![](2.png)
+
+- Connections：连接数
+- Channels：频道数
+- Exchanges：交换机数
+- Queues：队列数
+- Consumers：消费者数
+
+### 交换机页面
+
+![](3.png)
+
+### 队列页面
+
+![](4.png)
+
+- Name：消息队列的名称，这里是通过程序创建的
+- Features：消息队列的类型，durable:true为会持久化消息
+- Ready：准备好的消息
+- Unacked：未确认的消息
+- Total：全部消息
+- 备注：如果都为 0 则说明全部消息处理完成" class="j-carrier-data carrier-data">
   
 </ul>
         

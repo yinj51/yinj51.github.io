@@ -234,9 +234,241 @@
         
           <ul class="copyright">
   
-    <li><strong>本文作者：</strong>Yin</li>
-    <li><strong>本文链接：</strong><a href="http://xuzhimo.top/2020/10/09/%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3/index.html" title="http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;10&#x2F;09&#x2F;%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3&#x2F;index.html">http:&#x2F;&#x2F;xuzhimo.top&#x2F;2020&#x2F;10&#x2F;09&#x2F;%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3&#x2F;index.html</a></li>
-    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+     <li><strong>版权声明：</strong>本文作者放弃了版权，大家随意搬运，特此奉上搬运链接：<a href="javascript:;" class="j-carrier-btn">一键打包带走</a></li>
+    <input value="---
+title: 注解@Async解决异步调用问题
+date: 2020-10-09 11:13:03
+categories: 
+- Async
+tags: 
+- JAVA
+- 异步
+- Spring
+- Async
+image: /images/theme/古建筑.jpg
+excerpt: Spring中@Async异步的正确使用。
+---
+
+## 序言：Spring中@Async
+
+根据Spring的文档说明，默认采用的是单线程的模式的。所以在Java应用中，绝大多数情况下都是通过同步的方式来实现交互处理的。
+
+那么当多个任务的执行势必会相互影响。例如，如果A任务执行时间比较长，那么B任务必须等到A任务执行完毕后才会启动执行。又如在处理与第三方系统交互的时候，容易造成响应迟缓的情况，之前大部分都是使用多线程来完成此类任务，其实，在`spring3.x`之后，已经内置了@Async来完美解决这个问题。
+
+## 1. 何为异步调用？
+
+在解释之前，我们先来看二者的定义：
+
+
+
+### 同步调用：顺序执行，需等待上一个任务执行完毕
+
+就是整个处理过程顺序执行，当各个过程都执行完毕，并返回结果。
+
+
+
+### 异步调用：接收到指令就执行，无需等待
+
+则是只是发送了调用的指令，调用者无需等待被调用的方法完全执行完毕；而是继续执行下面的流程。
+
+例如， 在某个调用中，需要顺序调用A,B,C三个过程方法：
+如他们都是同步调用，则需要将他们都顺序执行完毕之后，方算作过程执行完毕；如B为一个异步的调用方法，则在执行完A之后，调用B，并不等待B完成，而是执行开始调用C，待C执行完毕之后，就意味着这个过程执行完毕了。
+
+如图所示：
+![img](1.png)
+
+
+
+## 2. 常规的异步调用处理方式
+
+在Java中，一般在处理类似的场景之时，都是基于创建独立的线程去完成相应的异步调用逻辑，通过主线程和不同的线程之间的执行流程，从而在启动独立的线程之后，主线程继续执行而不会产生停滞等待的情况。或是使用TaskExecutor执行异步线程，参看http://www.cnblogs.com/wihainan/p/6098970.html
+
+
+
+## 3. 如何在Spring中启用@Async？
+
+
+
+### 3.0、@Async介绍
+
+在Spring中，基于@Async标注的方法，称之为异步方法；这些方法在执行的时候，将会在独立的线程中被执行，调用者无需等待它的完成，即可继续其他的操作。
+
+
+
+### 3.1、启用`@Async`注解
+
+#### 3.1.1、基于Java配置的启用方式：
+
+```java
+@Configuration  
+@EnableAsync  
+public class SpringAsyncConfig { ... }  
+```
+
+#### 3.1.2、基于SpringBoot配置的启用方式：
+
+```java
+@SpringBootApplication
+@EnableAsync
+public class SpringBootApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootApplication.class, args);
+    }
+}
+```
+
+
+
+### 3.2、使用`@Async`注解，声明方法为异步调用
+
+#### 3.2.0、在无返回值方法上使用：
+
+在方法上申明为异步调用方法即可
+
+```java
+    @Async //标注使用
+    public void downloadFile() throws Exception { ... } 
+```
+
+#### 3.2.1、在有返回值方法上使用：
+
+```
+@Async  
+public Future&lt;String&gt; asyncMethodWithReturnType() {  
+    System.out.println(&#34;Execute method asynchronously - &#34;  + Thread.currentThread().getName());  
+    try {  
+        Thread.sleep(5000);  
+        return new AsyncResult&lt;String&gt;(&#34;hello world !!!!&#34;);  
+    } catch (InterruptedException e) {  
+        //  
+    }  
+   
+    return null;  
+}
+```
+
+以上示例可以发现，返回的数据类型为Future类型，其为一个接口。具体的结果类型为AsyncResult,这个是需要注意的地方。
+
+调用返回结果的异步方法示例:
+
+```
+public void testAsyncAnnotationForMethodsWithReturnType()  
+   throws InterruptedException, ExecutionException {  
+    System.out.println(&#34;Invoking an asynchronous method. &#34;   + Thread.currentThread().getName());  
+    Future&lt;String&gt; future = asyncAnnotationExample.asyncMethodWithReturnType();  
+   
+    while (true) {  ///这里使用了循环判断，等待获取结果信息  
+        if (future.isDone()) {  //判断是否执行完毕  
+            System.out.println(&#34;Result from asynchronous process - &#34; + future.get());  
+            break;  
+        }  
+        System.out.println(&#34;Continue doing something else. &#34;);  
+        Thread.sleep(1000);  
+    }  
+}
+```
+
+这些获取异步方法的结果信息，是通过不停的检查Future的状态来获取当前的异步方法是否执行完毕来实现的。
+
+
+
+## 4. 基于@Async调用中的异常处理机制
+
+在异步方法中，如果出现异常，对于调用者caller而言，是无法感知的。如果确实需要进行异常处理，则按照如下方法来进行处理：
+
+- 自定义实现AsyncTaskExecutor的任务执行器
+  在这里定义处理具体异常的逻辑和方式。
+
+- 配置由自定义的TaskExecutor替代内置的任务执行器
+
+  示例步骤1，自定义的TaskExecutor
+
+```
+public class ExceptionHandlingAsyncTaskExecutor implements AsyncTaskExecutor {  
+    private AsyncTaskExecutor executor;  
+    public ExceptionHandlingAsyncTaskExecutor(AsyncTaskExecutor executor) {  
+        this.executor = executor;  
+     }  
+      ////用独立的线程来包装，@Async其本质就是如此  
+    public void execute(Runnable task) {       
+      executor.execute(createWrappedRunnable(task));  
+    }  
+    public void execute(Runnable task, long startTimeout) {  
+        /用独立的线程来包装，@Async其本质就是如此  
+       executor.execute(createWrappedRunnable(task), startTimeout);           
+    }   
+    public Future submit(Runnable task) { return executor.submit(createWrappedRunnable(task));  
+       //用独立的线程来包装，@Async其本质就是如此。  
+    }   
+    public Future submit(final Callable task) {  
+      //用独立的线程来包装，@Async其本质就是如此。  
+       return executor.submit(createCallable(task));   
+    }   
+      
+    private Callable createCallable(final Callable task) {   
+        return new Callable() {   
+            public T call() throws Exception {   
+                 try {   
+                     return task.call();   
+                 } catch (Exception ex) {   
+                     handle(ex);   
+                     throw ex;   
+                   }   
+                 }   
+        };   
+    }  
+  
+    private Runnable createWrappedRunnable(final Runnable task) {   
+         return new Runnable() {   
+             public void run() {   
+                 try {  
+                     task.run();   
+                  } catch (Exception ex) {   
+                     handle(ex);   
+                   }   
+            }  
+        };   
+    }   
+    private void handle(Exception ex) {  
+      //具体的异常逻辑处理的地方  
+      System.err.println(&#34;Error during @Async execution: &#34; + ex);  
+    }  
+}
+```
+
+分析： 可以发现其是实现了AsyncTaskExecutor, 用独立的线程来执行具体的每个方法操作。在createCallable和createWrapperRunnable中，定义了异常的处理方式和机制。
+
+`handle()`就是未来我们需要关注的异常处理的地方。
+xml配置文件中的内容：
+
+```
+&lt;task:annotation-driven executor=&#34;exceptionHandlingTaskExecutor&#34; scheduler=&#34;defaultTaskScheduler&#34; /&gt;  
+&lt;bean id=&#34;exceptionHandlingTaskExecutor&#34; class=&#34;nl.jborsje.blog.examples.ExceptionHandlingAsyncTaskExecutor&#34;&gt;  
+    &lt;constructor-arg ref=&#34;defaultTaskExecutor&#34; /&gt;  
+&lt;/bean&gt;  
+&lt;task:executor id=&#34;defaultTaskExecutor&#34; pool-size=&#34;5&#34; /&gt;  
+&lt;task:scheduler id=&#34;defaultTaskScheduler&#34; pool-size=&#34;1&#34; /&gt;
+```
+
+也可以使用注解的形式将其配置注册到bean中。
+
+
+
+## 5. @Async调用中的事务处理机制
+
+在`@Async`标注的方法，同时也使用`@Transactional`进行标注；在其调用数据库操作之时，将无法产生事务管理的控制，原因就在于其是基于异步处理的操作。
+
+那该如何给这些操作添加事务管理呢？
+
+可以将需要事务管理操作的方法放置到异步方法内部，在内部被调用的方法上添加`@Transactional`
+
+
+
+### 示例：
+
+**方法A，** 使用了`@Async`/`@Transactional`来标注，但是无法产生事务控制的目的。
+
+**方法B，** 使用了`@Async`来标注，B中调用了C、D，C/D分别使用`@Transactional`做了标注，则可实现事务控制的目的。" class="j-carrier-data carrier-data">
   
 </ul>
         
