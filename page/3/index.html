@@ -201,6 +201,10 @@
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 18, 2020</span>
         
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/18/Actor-%E6%A8%A1%E5%9E%8B/" class="leancloud" data-flag-title="Actor-模型"></span>
+          </span>
+        
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>1345</span>
       </div>
     </div>
@@ -225,6 +229,10 @@
       </div>
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+        
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/16/Docker%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E5%AE%9E%E6%88%98/" class="leancloud" data-flag-title="Docker（五）：实战"></span>
+          </span>
         
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>11514</span>
       </div>
@@ -251,6 +259,10 @@
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
         
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/16/Docker%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9A%E4%BB%93%E5%BA%93/" class="leancloud" data-flag-title="Docker（四）：仓库"></span>
+          </span>
+        
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>6375</span>
       </div>
     </div>
@@ -275,6 +287,10 @@
       </div>
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+        
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/16/Docker%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%AE%B9%E5%99%A8/" class="leancloud" data-flag-title="Docker（三）：容器"></span>
+          </span>
         
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>4382</span>
       </div>
@@ -301,6 +317,10 @@
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
         
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/16/Docker%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E9%95%9C%E5%83%8F/" class="leancloud" data-flag-title="Docker（二）：镜像"></span>
+          </span>
+        
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>28851</span>
       </div>
     </div>
@@ -325,6 +345,10 @@
       </div>
       <div class="post-info">
         <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+        
+          <span class="post-info-item">
+            <i class="iconfont iconeye"></i><span id="/2020/07/16/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/" class="leancloud" data-flag-title="Redis分布式集群（解决高性能问题）"></span>
+          </span>
         
         <span class="post-info-item"><i class="iconfont iconfont-size"></i>14474</span>
       </div>
@@ -431,6 +455,43 @@
 <script src="/js/script.js"></script>
 
 
+
+  <script>
+  $.getScript("//cdn.jsdelivr.net/npm/leancloud-storage@4.1.0/dist/av-min.js", () => {
+
+    AV.init({
+      appId: '',
+      appKey: '',
+      serverURLs: 'https://leancloud.cn/',
+    });
+
+    const showCount = (Counter) => {
+      const asyncLimit = new AsyncLimit(2);
+      $(".leancloud").each(async (e) => {
+        const url = $(".leancloud").eq(e).attr('id').trim();
+        const query = new AV.Query("Counter");
+        query.equalTo("words", url);
+        let count = await asyncLimit.run(() => query.count());
+        $(".leancloud").eq(e).text(count ? count : '--');
+      });
+    }
+
+    const addCount = (Counter) => {
+      const url = $(".leancloud").length === 1 ? $(".leancloud").attr('id').trim() : 'http://xuzhimo.top';
+      var query = new Counter;
+      query.save({
+        words: url
+      });
+    }
+
+    $(function () {
+      const Counter = AV.Object.extend("Counter");
+      addCount(Counter);
+      showCount(Counter);
+    });
+
+  });
+</script>
 
 
 
