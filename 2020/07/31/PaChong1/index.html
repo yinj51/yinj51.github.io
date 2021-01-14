@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<html lang="en" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>23个Python爬虫开源项目代码：爬取微信、淘宝、豆瓣、知乎、微博等 - Yin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="Yin">
+  <meta name="description" content="来源：Python数据科学
+
+今天为大家整理了32个P...">
+  <meta name="author" content="Yin">
+  <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/loading.gif'
+      },
+      donate: {
+        enable: true,
+        alipay: '/images/theme/周杰伦.jpg',
+        wechat: '/images/theme/wxpay.png'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: false
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '/images/theme/welcome-image.jpg',
+          api: ''
+        },
+        motto: {
+          default: '轻轻的我走了，正如我轻轻的来。',
+          api: 'https://v2.jinrishici.com/one.json',
+          data_contents: '["data","content"]'
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'url',
+        image: '/images/theme/周杰伦.jpg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        model: 'simple'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">23个Python爬虫开源项目代码：爬取微信、淘宝、豆瓣、知乎、微博等</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/book " class="underline "> 书籍</a>
+      </li><li class="menu-item">
+        <a href="/archives " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/about " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/%E9%98%BF%E5%B0%94%E5%8D%91%E6%96%AF%E5%B1%B1.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">23个Python爬虫开源项目代码：爬取微信、淘宝、豆瓣、知乎、微博等</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 31, 2020</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2928</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <p>来源：Python数据科学</p>
+<p><img   class="lazyload" data-original="1.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  alt="img"></p>
+<p>今天为大家整理了32个Python爬虫项目。整理的原因是，爬虫入门简单快速，也非常适合新入门的小伙伴培养信心，所有链接指向GitHub。</p>
+<p><strong>1、WechatSogou – 微信公众号爬虫</strong></p>
+<p>基于搜狗微信搜索的微信公众号爬虫接口，可以扩展成基于搜狗搜索的爬虫，返回结果是列表，每一项均是公众号具体信息字典。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Chyroc/WechatSogou">https://github.com/Chyroc/WechatSogou</a></p>
+<p><strong>2、DouBanSpider – 豆瓣读书爬虫</strong></p>
+<p>可以爬下豆瓣读书标签下的所有图书，按评分排名依次存储，存储到Excel中，可方便大家筛选搜罗，比如筛选评价人数&gt;1000的高分书籍；可依据不同的主题存储到Excel不同的Sheet ，采用User Agent伪装为浏览器进行爬取，并加入随机延时来更好的模仿浏览器行为，避免爬虫被封。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/lanbing510/DouBanSpider">https://github.com/lanbing510/DouBanSpider</a></p>
+<p><strong>3、zhihu_spider – 知乎爬虫</strong></p>
+<p>此项目的功能是爬取知乎用户信息以及人际拓扑关系，爬虫框架使用scrapy，数据存储使用mongo</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/LiuRoy/zhihu_spider">https://github.com/LiuRoy/zhihu_spider</a></p>
+<p><strong>4、bilibili-user – Bilibili用户爬虫</strong></p>
+<p>总数据数：20119918，抓取字段：用户id，昵称，性别，头像，等级，经验值，粉丝数，生日，地址，注册时间，签名，等级与经验值等。抓取之后生成B站用户数据报告。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/airingursb/bilibili-user">https://github.com/airingursb/bilibili-user</a></p>
+<p><strong>5、SinaSpider – 新浪微博爬虫</strong></p>
+<p>主要爬取新浪微博用户的个人信息、微博信息、粉丝和关注。代码获取新浪微博Cookie进行登录，可通过多账号登录来防止新浪的反扒。主要使用 scrapy 爬虫框架。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/LiuXingMing/SinaSpider">https://github.com/LiuXingMing/SinaSpider</a></p>
+<p><strong>6、distribute_crawler – 小说下载分布式爬虫</strong></p>
+<p>使用scrapy,Redis, MongoDB,graphite实现的一个分布式网络爬虫,底层存储MongoDB集群,分布式使用Redis实现,爬虫状态显示使用graphite实现，主要针对一个小说站点。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gnemoug/distribute_crawler">https://github.com/gnemoug/distribute_crawler</a></p>
+<p><strong>7、CnkiSpider – 中国知网爬虫</strong></p>
+<p>设置检索条件后，执行src/CnkiSpider.py抓取数据，抓取数据存储在/data目录下，每个数据文件的第一行为字段名称。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yanzhou/CnkiSpider">https://github.com/yanzhou/CnkiSpider</a></p>
+<p><strong>8、LianJiaSpider – 链家网爬虫</strong></p>
+<p>爬取北京地区链家历年二手房成交记录。涵盖链家爬虫一文的全部代码，包括链家模拟登录代码。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/lanbing510/LianJiaSpider">https://github.com/lanbing510/LianJiaSpider</a></p>
+<p><strong>9、scrapy_jingdong – 京东爬虫</strong></p>
+<p>基于scrapy的京东网站爬虫，保存格式为csv。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/taizilongxu/scrapy_jingdong">https://github.com/taizilongxu/scrapy_jingdong</a></p>
+<p><strong>10、QQ-Groups-Spider – QQ 群爬虫</strong></p>
+<p>批量抓取 QQ 群信息，包括群名称、群号、群人数、群主、群简介等内容，最终生成 XLS(X) / CSV 结果文件。</p>
+<p>github地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/caspartse/QQ-Groups-Spider">https://github.com/caspartse/QQ-Groups-Spider</a></p>
+<p><strong>11、wooyun_public – 乌云爬虫</strong></p>
+<p> 乌云公开漏洞、知识库爬虫和搜索。全部公开漏洞的列表和每个漏洞的文本内容存在MongoDB中，大概约2G内容；如果整站爬全部文本和图片作为离线查询，大概需要10G空间、2小时（10M电信带宽）；爬取全部知识库，总共约500M空间。漏洞搜索使用了Flask作为web server，bootstrap作为前端。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/hanc00l/wooyun_public">https://github.com/hanc00l/wooyun_public</a></p>
+<p><strong>12、spider – hao123网站爬虫</strong></p>
+<p>以hao123为入口页面，滚动爬取外链，收集网址，并记录网址上的内链和外链数目，记录title等信息，windows7 32位上测试，目前每24个小时，可收集数据为10万左右</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/simapple/spider">https://github.com/simapple/spider</a></p>
+<p><strong>13、findtrip – 机票爬虫（去哪儿和携程网）</strong></p>
+<p>Findtrip是一个基于Scrapy的机票爬虫，目前整合了国内两大机票网站（去哪儿 + 携程）。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/fankcoder/findtrip">https://github.com/fankcoder/findtrip</a></p>
+<p><strong>14、163spider – 基于requests、MySQLdb、torndb的网易客户端内容爬虫</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/leyle/163spider">https://github.com/leyle/163spider</a></p>
+<p><strong>15、doubanspiders – 豆瓣电影、书籍、小组、相册、东西等爬虫集</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/fanpei91/doubanspiders">https://github.com/fanpei91/doubanspiders</a></p>
+<p><strong>16、QQSpider – QQ空间爬虫</strong></p>
+<p>包括日志、说说、个人信息等，一天可抓取 400 万条数据</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/LiuXingMing/QQSpider">https://github.com/LiuXingMing/QQSpider</a></p>
+<p><strong>17、baidu-music-spider – 百度mp3全站爬虫</strong></p>
+<p>使用redis支持断点续传</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Shu-Ji/baidu-music-spider">https://github.com/Shu-Ji/baidu-music-spider</a></p>
+<p><strong>18、tbcrawler – 淘宝和天猫的爬虫</strong></p>
+<p>可以根据搜索关键词,物品id来抓去页面的信息，数据存储在mongodb。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/pakoo/tbcrawler">https://github.com/pakoo/tbcrawler</a></p>
+<p><strong>19、stockholm – 一个股票数据（沪深）爬虫和选股策略</strong>测试框架</p>
+<p>根据选定的日期范围抓取所有沪深两市股票的行情数据。支持使用表达式定义选股策略。支持多线程处理。保存数据到JSON文件、CSV文件。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/benitoro/stockholm">https://github.com/benitoro/stockholm</a></p>
+<p><strong>20、BaiduyunSpider – 百度云盘爬虫</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/k1995/BaiduyunSpider">https://github.com/k1995/BaiduyunSpider</a></p>
+<p><strong>21、Spider – 社交数据爬虫</strong></p>
+<p>支持微博，知乎，豆瓣。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Qutan/Spider">https://github.com/Qutan/Spider</a></p>
+<p><strong>22、proxy pool – Python爬虫代理IP池(proxy pool)</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jhao104/proxy_pool">https://github.com/jhao104/proxy_pool</a></p>
+<p><strong>23、music-163 – 爬取网易云音乐所有歌曲的评论</strong></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/RitterHou/music-163">https://github.com/RitterHou/music-163</a></p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>Yin</li>
+    <li><strong>本文链接：</strong><a href="http://yoursite.com/2020/07/31/PaChong1/index.html" title="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;31&#x2F;PaChong1&#x2F;index.html">http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;31&#x2F;PaChong1&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+          <section class="donate">
+  <div id="qrcode-donate">
+    <img   class="lazyload" data-original="/images/theme/周杰伦.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/GitHub/" rel="tag">GitHub</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a href="/2020/10/09/%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3/"><i class="iconfont iconleft"></i>注解@Async解决异步调用问题</a>
+    <a href="/2020/07/19/Hexo%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E8%8F%9C%E5%8D%95%E9%A1%B9/">Hexo菜单<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="tencent://message/?Menu=yes&uin=371755747 "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#12B7F5'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconQQ "></i>
+      </a><a 
+        href="javascript:; "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#09BB07'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconwechat-fill "></i>
+      </a><a 
+        href="https://github.com/yinj51/yin.github.io "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#24292E'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:yinjingem@163.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color=#FF3B00" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail"></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+    <div class="scrollbar j-scrollbar">
+  <div class="scrollbar-current j-scrollbar-current"></div>
+</div>
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

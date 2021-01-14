@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<html lang="en" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Redis的主从和哨兵机制（解决高可用问题） - Yin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="Yin">
+  <meta name="description" content="Redis的主从和哨兵机制1.单机存在的问题1，高可用...">
+  <meta name="author" content="Yin">
+  <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/loading.gif'
+      },
+      donate: {
+        enable: true,
+        alipay: '/images/theme/周杰伦.jpg',
+        wechat: '/images/theme/wxpay.png'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: false
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '/images/theme/welcome-image.jpg',
+          api: ''
+        },
+        motto: {
+          default: '轻轻的我走了，正如我轻轻的来。',
+          api: 'https://v2.jinrishici.com/one.json',
+          data_contents: '["data","content"]'
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'url',
+        image: '/images/theme/周杰伦.jpg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        model: 'simple'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">Redis的主从和哨兵机制（解决高可用问题）</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/book " class="underline "> 书籍</a>
+      </li><li class="menu-item">
+        <a href="/archives " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/about " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/%E5%B1%B1%E6%B0%B41.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">Redis的主从和哨兵机制（解决高可用问题）</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>3977</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="Redis的主从和哨兵机制"><a href="#Redis的主从和哨兵机制" class="headerlink" title="Redis的主从和哨兵机制"></a>Redis的主从和哨兵机制</h1><h2 id="1-单机存在的问题"><a href="#1-单机存在的问题" class="headerlink" title="1.单机存在的问题"></a>1.单机存在的问题</h2><p>1，高可用的问题</p>
+<p>2，高性能的问题</p>
+<p><strong>本篇文章，主要来解决高可用的问题</strong></p>
+<h2 id="2-配置主从关系"><a href="#2-配置主从关系" class="headerlink" title="2.配置主从关系"></a>2.配置主从关系</h2><p>1，在从机执行命令的方式来配置主从关系</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs armasm">在从机执行 slaveof <span class="hljs-built_in">ip</span> port <br><br>就会自动从主机开始复制 <br></code></pre></td></tr></table></figure>
+<p>2，通过配置文件的方式来配置主从</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">slaveof ip port<br><br><span class="hljs-literal">Slave</span>-<span class="hljs-keyword">read</span>-only yes<br></code></pre></td></tr></table></figure>
+<p>3，在节点上执行如下命令，查看复制状态信息</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">info</span> <span class="hljs-keyword">replication</span> <br><br><span class="hljs-keyword">Replication</span>:复制<br></code></pre></td></tr></table></figure>
+<p>4，测试验证结果：</p>
+<p>在主节点操作数据，在从节点查看是否有同步 </p>
+<p>5，断开复制：执行</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">slaveof</span> <span class="hljs-literal">no</span> one <br></code></pre></td></tr></table></figure>
+<p>则会解除关系 </p>
+<p>6，解决安全性问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">主节点设置 auth<br><br>从节点设置 masterauth <br></code></pre></td></tr></table></figure>
+<p>7，解决传输的延迟问题</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">Repl-disable-tcp-nodelay</span><br></code></pre></td></tr></table></figure>
+<p>当关闭时，主节点产生的命令无论大小都会及时发送给从节点，这样，延迟会变小，但网络带宽消耗较大，适用于主从部署在同个机房的情况而如果是跨机房部署，建议打开，这样主节点会合并较小的TCP数据包从而节省带宽，默认发送时间间隔为40毫秒 </p>
+<p>是否禁用tcp不延迟传输：no</p>
+<p>就是不禁用</p>
+<h2 id="3-主从复制的流程"><a href="#3-主从复制的流程" class="headerlink" title="3.主从复制的流程"></a>3.主从复制的流程</h2><p>主要分为6个步骤：</p>
+<p>1，从节点保存主节点信息</p>
+<p>2，主从建立socket连接</p>
+<p>3，从节点发送ping命令，等待主节点返回pong回应</p>
+<p>4，权限验证</p>
+<p>5，主从连接正常后，开始同步数据集，首次建立复制，是全量复制的方式</p>
+<p>6，持续的主从复制，后续主节点发生数据变更，会继续给从节点发送命令，此处采用增量复制说明：主节点和从节点都会记录一个叫复制偏移量的值，来确定从哪开始继续复制。通过在主从节点执行info repplication 对比offset的值即可这个也是检查主从复制的健康度依据</p>
+<h2 id="4-主从的多种拓扑结构"><a href="#4-主从的多种拓扑结构" class="headerlink" title="4.主从的多种拓扑结构"></a>4.主从的多种拓扑结构</h2><p>1，一主一从</p>
+<p>2，一主多从适用于读多写少的场景，如果是写多读少的场景，多个从节点会导致主节点写命令的多次同步而过度消耗网络带宽</p>
+<p>3，树状主从结构就是将从节点变成多层，这样可以减少主节点需要传输给从节点的数据量</p>
+<p><img    class="lazyload" data-original="wps1.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<h1 id="哨兵"><a href="#哨兵" class="headerlink" title="哨兵"></a>哨兵</h1><h2 id="5-为什么需要哨兵模式"><a href="#5-为什么需要哨兵模式" class="headerlink" title="5.为什么需要哨兵模式"></a>5.为什么需要哨兵模式</h2><p>主从模式存在一个问题，如果主节点挂了，那么需要人工的方式来将某个从节点设置为主节点，这样的手工维护方式不太智能。</p>
+<p>人工处理，要经历以下几个步骤：</p>
+<p>1，选择一个从节点，执行slaveof no one，使其成为新主节点</p>
+<p>2，从节点成为主节点后，更新应用方的主节点信息，然后重启应用方</p>
+<p>3，其他从节点，跟新的主节点建立主从关系 slaveof ip port</p>
+<p>4，等原先的主节点恢复后，让它去复制新的主节点 Redis从2.8开始，通过哨兵机制Redis Sentinel解决了这个问题，从而达到高可用。</p>
+<p><strong>说明：正确来说应该是2.6版就提供，但是功能还不是很健全，所以投入实际项目应用，建议使用2.8以上版本</strong></p>
+<h2 id="6-哨兵Redis-Sentinel的架构图"><a href="#6-哨兵Redis-Sentinel的架构图" class="headerlink" title="6.哨兵Redis Sentinel的架构图"></a>6.哨兵Redis Sentinel的架构图</h2><p><img    class="lazyload" data-original="wps2.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p>哨兵架构的本质：就是在主从的架构基础上多了监控的机制</p>
+<h2 id="7-哨兵机制的工作步骤"><a href="#7-哨兵机制的工作步骤" class="headerlink" title="7.哨兵机制的工作步骤"></a>7.哨兵机制的工作步骤</h2><p>1，每个哨兵节点通过定时监控发现主节点出现故障</p>
+<p>2，多个哨兵节点通过主节点的故障达成一致，并选择出一个哨兵节点作为领导者负责本次故障转移处理</p>
+<p>3，哨兵领导节点执行故障转移，整个过程自动完成，无需人工干预</p>
+<h2 id="8-搭建哨兵架构"><a href="#8-搭建哨兵架构" class="headerlink" title="8.搭建哨兵架构"></a>8.搭建哨兵架构</h2><p><strong>注意：哨兵节点也是Redis节点，只是他们不存储数据</strong></p>
+<p>整体上，我们至少需要3个Redis节点来做哨兵，构成一主多从，因为哨兵的领导者选举需要至少一半加一个节点，就是过半数机制。</p>
+<p>再需要3个redis节点来做主从，实现读写分离</p>
+<p><img    class="lazyload" data-original="wps3.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p>搭建步骤：</p>
+<p>1，搭建一主多从的读写分离架构，这个跟之前没有差异。</p>
+<p><img    class="lazyload" data-original="wps4.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p>2，配置sentinel节点端口分别为26379,26380,26381</p>
+<p><strong>拷贝解压缩目录下的sentinel.conf 到bin目录下，并执行修改</strong></p>
+<p><strong>注意：如果要让远程连接，则127.0.0.1要修改成实际的服务器IP地址</strong></p>
+<p><img    class="lazyload" data-original="wps5.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p><img    class="lazyload" data-original="wps6.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span></p>
+<p><img    class="lazyload" data-original="wps7.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span></p>
+<p>3，启动哨兵服务（此项需要自己添加）</p>
+<p><img    class="lazyload" data-original="wps8.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p><img    class="lazyload" data-original="wps9.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p>4，然后关闭主节点，观察故障的自动处理结果</p>
+<p><strong>注意，自动恢复需要一定的处理时间，并不是立马生效</strong></p>
+<h2 id="9-通过哨兵查看主从情况"><a href="#9-通过哨兵查看主从情况" class="headerlink" title="9.通过哨兵查看主从情况"></a>9.通过哨兵查看主从情况</h2><p>注意要通过哨兵的端口登录，26379</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">Sentinel masters<br><br>Sentinel <span class="hljs-keyword">master</span> <span class="hljs-title">&lt;master</span> name&gt;<br><br>Sentinel slaves <span class="hljs-tag">&lt;master name&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+<h2 id="10-哨兵总结"><a href="#10-哨兵总结" class="headerlink" title="10.哨兵总结"></a>10.哨兵总结</h2><p><img    class="lazyload" data-original="wps10.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<hr>
+<h2 id="11-Spring配置哨兵模式"><a href="#11-Spring配置哨兵模式" class="headerlink" title="11.Spring配置哨兵模式"></a>11.Spring配置哨兵模式</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- 哨兵配置 --&gt;</span>  <br><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;sentinelConfig&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.RedisSentinelConfiguration&quot;</span>&gt;</span>  <br>    <span class="hljs-comment">&lt;!-- 配置master主服务的名称 --&gt;</span>  	<br>    <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;master&quot;</span>&gt;</span>  		<br>    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.RedisNode&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;name&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;mymaster&quot;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">property</span>&gt;</span><br><span class="hljs-comment">&lt;!-- 配置哨兵服务 --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;sentinels&quot;</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">set</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.RedisNode&quot;</span>&gt;</span> <br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;host&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;192.168.10.171&quot;</span>/&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;port&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;26379&quot;</span>/&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.RedisNode&quot;</span>&gt;</span> <br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;host&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;192.168.10.171&quot;</span>/&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;port&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;26380&quot;</span>/&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span> <br>        <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.RedisNode&quot;</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;host&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;192.168.10.171&quot;</span>/&gt;</span> <br>            <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;port&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;26381&quot;</span>/&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span><br>    <span class="hljs-tag">&lt;/<span class="hljs-name">set</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">property</span>&gt;</span> <br><span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span> <br>	<span class="hljs-comment">&lt;!-- 配置redis连接工厂 --&gt;</span>  <br>    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;connectionFactory&quot;</span> 	<span class="hljs-attr">class</span>=<span class="hljs-string">&quot;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&quot;</span>&gt;</span> <br>	<span class="hljs-comment">&lt;!-- 配置哨兵 --&gt;</span> <br>	<span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;sentinelConfig&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;sentinelConfig&quot;</span>/&gt;</span> <br>	<span class="hljs-comment">&lt;!-- 连接池配置 --&gt;</span>  <br>	<span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;poolConfig&quot;</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;poolConfig&quot;</span>/&gt;</span> <br>	<span class="hljs-comment">&lt;!-- 密码 --&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;password&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;root&quot;</span>/&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+
+<h2 id="12-开放哨兵访问权限"><a href="#12-开放哨兵访问权限" class="headerlink" title="12.开放哨兵访问权限"></a>12.开放哨兵访问权限</h2><p><img    class="lazyload" data-original="wps11.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span> </p>
+<p>问题一：哨兵无法远程访问，需要打开哨兵配置的保护模式</p>
+<p>问题二：连接上哨兵之后，无法获取redis连接，需要将哨兵配置中的127.0.0.1也要修改为实际的服务器地址，否则客户端从哨兵获取的redis主机地址也会是127.0.0.1</p>
+<p><img    class="lazyload" data-original="wps12.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="   ><span class="image-caption">img</span></p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>Yin</li>
+    <li><strong>本文链接：</strong><a href="http://yoursite.com/2020/07/16/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/index.html" title="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6&#x2F;index.html">http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+          <section class="donate">
+  <div id="qrcode-donate">
+    <img   class="lazyload" data-original="/images/theme/周杰伦.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%BB%E4%BB%8E%E6%9C%BA%E5%88%B6/" rel="tag">主从机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" rel="tag">哨兵机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag">高可用</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a href="/2020/07/16/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4/"><i class="iconfont iconleft"></i>Redis分布式集群（解决高性能问题）</a>
+    <a href="/2020/07/16/Docker%EF%BC%88%E4%B8%80%EF%BC%89%EF%BC%9A%E7%AE%80%E4%BB%8B/">Docker（一）：简介<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%92%8C%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6"><span class="toc-text">Redis的主从和哨兵机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%8D%95%E6%9C%BA%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">1.单机存在的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E5%85%B3%E7%B3%BB"><span class="toc-text">2.配置主从关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-text">3.主从复制的流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%BB%E4%BB%8E%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%8B%93%E6%89%91%E7%BB%93%E6%9E%84"><span class="toc-text">4.主从的多种拓扑结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%93%A8%E5%85%B5"><span class="toc-text">哨兵</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="toc-text">5.为什么需要哨兵模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%93%A8%E5%85%B5Redis-Sentinel%E7%9A%84%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-text">6.哨兵Redis Sentinel的架构图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4"><span class="toc-text">7.哨兵机制的工作步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E6%90%AD%E5%BB%BA%E5%93%A8%E5%85%B5%E6%9E%B6%E6%9E%84"><span class="toc-text">8.搭建哨兵架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E9%80%9A%E8%BF%87%E5%93%A8%E5%85%B5%E6%9F%A5%E7%9C%8B%E4%B8%BB%E4%BB%8E%E6%83%85%E5%86%B5"><span class="toc-text">9.通过哨兵查看主从情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%93%A8%E5%85%B5%E6%80%BB%E7%BB%93"><span class="toc-text">10.哨兵总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-Spring%E9%85%8D%E7%BD%AE%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="toc-text">11.Spring配置哨兵模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E5%BC%80%E6%94%BE%E5%93%A8%E5%85%B5%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="toc-text">12.开放哨兵访问权限</span></a></li></ol></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="tencent://message/?Menu=yes&uin=371755747 "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#12B7F5'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconQQ "></i>
+      </a><a 
+        href="javascript:; "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#09BB07'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconwechat-fill "></i>
+      </a><a 
+        href="https://github.com/yinj51/yin.github.io "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#24292E'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:yinjingem@163.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color=#FF3B00" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail"></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+    <div class="scrollbar j-scrollbar">
+  <div class="scrollbar-current j-scrollbar-current"></div>
+</div>
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

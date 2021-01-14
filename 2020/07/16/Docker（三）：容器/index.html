@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<html lang="en" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Docker（三）：容器 - Yin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="Yin">
+  <meta name="description" content="一、操作 Docker 容器容器是 Docker 又一...">
+  <meta name="author" content="Yin">
+  <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/loading.gif'
+      },
+      donate: {
+        enable: true,
+        alipay: '/images/theme/周杰伦.jpg',
+        wechat: '/images/theme/wxpay.png'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: false
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '/images/theme/welcome-image.jpg',
+          api: ''
+        },
+        motto: {
+          default: '轻轻的我走了，正如我轻轻的来。',
+          api: 'https://v2.jinrishici.com/one.json',
+          data_contents: '["data","content"]'
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'url',
+        image: '/images/theme/周杰伦.jpg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        model: 'simple'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">Docker（三）：容器</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/book " class="underline "> 书籍</a>
+      </li><li class="menu-item">
+        <a href="/archives " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/about " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/%E6%99%B4%E7%A9%BA.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">Docker（三）：容器</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>4382</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="一、操作-Docker-容器"><a href="#一、操作-Docker-容器" class="headerlink" title="一、操作 Docker 容器"></a>一、操作 Docker 容器</h1><p>容器是 Docker 又一核心概念。</p>
+<p>简单的说，容器是独立运行的一个或一组应用，以及它们的运行态环境。对应的，虚拟机可以理解为模拟运行的一整套操作系统（提供了运行态环境和其他系统环境）和跑在上面的应用。</p>
+<p>本章将具体介绍如何来管理一个容器，包括创建、启动和停止等。</p>
+<h1 id="二、启动容器"><a href="#二、启动容器" class="headerlink" title="二、启动容器"></a>二、启动容器</h1><p>启动容器有两种方式，一种是基于镜像新建一个容器并启动，另外一个是将在终止状态（<code>stopped</code>）的容器重新启动。</p>
+<p>因为 Docker 的容器实在太轻量级了，很多时候用户都是随时删除和新创建容器。</p>
+<h2 id="1-新建并启动"><a href="#1-新建并启动" class="headerlink" title="1.新建并启动"></a>1.新建并启动</h2><p>所需要的命令主要为 <code>docker run</code>。</p>
+<p>例如，下面的命令输出一个 “Hello World”，之后终止容器。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">$ docker <span class="hljs-keyword">run</span><span class="bash"> ubuntu:14.04 /bin/<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;Hello world&#x27;</span></span><br>Hello world<br></code></pre></td></tr></table></figure>
+<p>这跟在本地直接执行 <code>/bin/echo &#39;hello world&#39;</code> 几乎感觉不出任何区别。</p>
+<p>下面的命令则启动一个 bash 终端，允许用户进行交互。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>docker run -t -i <span class="hljs-symbol">ubuntu:</span><span class="hljs-number">14.04</span> /bin/bash<br>root<span class="hljs-variable">@af8bae53bdd3</span><span class="hljs-symbol">:/</span><span class="hljs-comment">#</span><br></code></pre></td></tr></table></figure>
+<p>其中，<code>-t</code> 选项让Docker分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上， <code>-i</code> 则让容器的标准输入保持打开。</p>
+<p>在交互模式下，用户可以通过所创建的终端来输入命令，例如</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ruby">root<span class="hljs-variable">@af8bae53bdd3</span><span class="hljs-symbol">:/</span><span class="hljs-comment"># pwd</span><br>/<br>root<span class="hljs-variable">@af8bae53bdd3</span><span class="hljs-symbol">:/</span><span class="hljs-comment"># ls</span><br>bin boot dev etc home lib lib64 media mnt opt <span class="hljs-built_in">proc</span> root run sbin srv sys tmp usr var<br></code></pre></td></tr></table></figure>
+<p>当利用 <code>docker run</code> 来创建容器时，Docker 在后台运行的标准操作包括：</p>
+<ul>
+<li>检查本地是否存在指定的镜像，不存在就从公有仓库下载</li>
+<li>利用镜像创建并启动一个容器</li>
+<li>分配一个文件系统，并在只读的镜像层外面挂载一层可读写层</li>
+<li>从宿主主机配置的网桥接口中桥接一个虚拟接口到容器中去</li>
+<li>从地址池配置一个 ip 地址给容器</li>
+<li>执行用户指定的应用程序</li>
+<li>执行完毕后容器被终止</li>
+</ul>
+<h2 id="2-启动已终止容器"><a href="#2-启动已终止容器" class="headerlink" title="2.启动已终止容器"></a>2.启动已终止容器</h2><p>可以利用 <code>docker container start</code> 命令，直接将一个已经终止的容器启动运行。</p>
+<p>容器的核心为所执行的应用程序，所需要的资源都是应用程序运行所必需的。除此之外，并没有其它的资源。可以在伪终端中利用 <code>ps</code> 或 <code>top</code> 来查看进程信息。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">root</span>@ba<span class="hljs-number">267838</span>cc<span class="hljs-number">1</span>b:/# ps<br>  <span class="hljs-attribute">PID</span> TTY          TIME CMD<br>    <span class="hljs-attribute">1</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> bash<br>   <span class="hljs-attribute">11</span> ?        <span class="hljs-number">00</span>:<span class="hljs-number">00</span>:<span class="hljs-number">00</span> ps<br></code></pre></td></tr></table></figure>
+<p>可见，容器中仅运行了指定的 bash 应用。这种特点使得 Docker 对资源的利用率极高，是货真价实的轻量级虚拟化。</p>
+<h1 id="三、守护态运行"><a href="#三、守护态运行" class="headerlink" title="三、守护态运行"></a>三、守护态运行</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><p>更多的时候，需要让 Docker 在后台运行而不是直接把执行命令的结果输出在当前宿主机下。此时，可以通过添加 <code>-d</code> 参数来实现。</p>
+<p>下面举两个例子来说明一下。</p>
+<p>如果不使用 <code>-d</code> 参数运行容器。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ docker run ubuntu:<span class="hljs-number">17.10</span> <span class="hljs-regexp">/bin/</span>sh -c <span class="hljs-string">&quot;while true; do echo hello world; sleep 1; done&quot;</span><br>hello world<br>hello world<br>hello world<br>hello world<br></code></pre></td></tr></table></figure>
+<p>容器会把输出的结果 (STDOUT) 打印到宿主机上面</p>
+<p>如果使用了 <code>-d</code> 参数运行容器。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ docker run -d ubuntu:<span class="hljs-number">17.10</span> <span class="hljs-regexp">/bin/</span>sh -c <span class="hljs-string">&quot;while true; do echo hello world; sleep 1; done&quot;</span><br><span class="hljs-number">77</span>b2dc01fe0f3f1265df143181e7b9af5e05279a884f4776ee75350ea9d8017a<br></code></pre></td></tr></table></figure>
+<p>此时容器会在后台运行并不会把输出的结果 (STDOUT) 打印到宿主机上面(输出结果可以用 <code>docker logs</code>查看)。</p>
+<p><strong>注：</strong> 容器是否会长久运行，是和 <code>docker run</code> 指定的命令有关，和 <code>-d</code> 参数无关。</p>
+<p>使用 <code>-d</code> 参数启动后会返回一个唯一的 id，也可以通过 <code>docker container ls</code> 命令来查看容器信息。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stata">$ docker container <span class="hljs-keyword">ls</span><br>CONTAINER ID  IMAGE         COMMAND               CREATED        STATUS       PORTS NAMES<br>77b2dc01fe0f  ubuntu:17.10  /bin/<span class="hljs-keyword">sh</span> -c &#x27;<span class="hljs-keyword">while</span> tr  2 minutes ago  Up 1 minute        agitated_wright<br></code></pre></td></tr></table></figure>
+<p>要获取容器的输出信息，可以通过 <code>docker container logs</code> 命令。</p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs axapta">$ docker <span class="hljs-built_in">container</span> logs [<span class="hljs-built_in">container</span> ID or NAMES]<br>hello world<br>hello world<br>hello world<br>. . .<br></code></pre></td></tr></table></figure>
+<h1 id="四、终止容器"><a href="#四、终止容器" class="headerlink" title="四、终止容器"></a>四、终止容器</h1><p>可以使用 <code>docker container stop</code> 来终止一个运行中的容器。</p>
+<p>此外，当 Docker 容器中指定的应用终结时，容器也自动终止。</p>
+<p>例如对于上一章节中只启动了一个终端的容器，用户通过 <code>exit</code> 命令或 <code>Ctrl+d</code> 来退出终端时，所创建的容器立刻终止。</p>
+<p>终止状态的容器可以用 <code>docker container ls -a</code> 命令看到。例如</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">docker</span> container ls -a<br><span class="hljs-attribute">CONTAINER</span> ID        IMAGE                    COMMAND                CREATED             STATUS                          PORTS               NAMES<br><span class="hljs-attribute">ba267838cc1b</span>        ubuntu:<span class="hljs-number">14</span>.<span class="hljs-number">04</span>             <span class="hljs-string">&quot;/bin/bash&quot;</span>            <span class="hljs-number">30</span> minutes ago      Exited (<span class="hljs-number">0</span>) About a minute ago                       trusting_newton<br><span class="hljs-attribute">98e5efa7d997</span>        training/webapp:latest   <span class="hljs-string">&quot;python app.py&quot;</span>        About an hour ago   Exited (<span class="hljs-number">0</span>) <span class="hljs-number">34</span> minutes ago                           backstabbing_pike<br></code></pre></td></tr></table></figure>
+<p>处于终止状态的容器，可以通过 <code>docker container start</code> 命令来重新启动。</p>
+<p>此外，<code>docker container restart</code> 命令会将一个运行态的容器终止，然后再重新启动它。</p>
+<h1 id="五、进入容器"><a href="#五、进入容器" class="headerlink" title="五、进入容器"></a>五、进入容器</h1><p>在使用 <code>-d</code> 参数时，容器启动后会进入后台。</p>
+<p>某些时候需要进入容器进行操作，包括使用 <code>docker attach</code> 命令或 <code>docker exec</code> 命令，推荐大家使用 <code>docker exec</code> 命令，原因会在下面说明。</p>
+<h2 id="1-attach-命令"><a href="#1-attach-命令" class="headerlink" title="1.attach 命令"></a>1.<code>attach</code> 命令</h2><p><code>docker attach</code> 是 Docker 自带的命令。下面示例如何使用该命令。</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs llvm">$ docker run -dit ubuntu<br><span class="hljs-number">243</span><span class="hljs-keyword">c</span><span class="hljs-number">32535</span>da<span class="hljs-number">7</span>d<span class="hljs-number">142</span>fb<span class="hljs-number">0e6</span>df<span class="hljs-number">616</span>a<span class="hljs-number">3</span><span class="hljs-keyword">c</span><span class="hljs-number">3</span>ada<span class="hljs-number">0</span>b<span class="hljs-number">8</span>ab<span class="hljs-number">417937</span><span class="hljs-keyword">c</span><span class="hljs-number">853</span>a<span class="hljs-number">9e1</span><span class="hljs-keyword">c</span><span class="hljs-number">251</span>f<span class="hljs-number">499</span>f<span class="hljs-number">550</span><br><br>$ docker container ls<br>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES<br><span class="hljs-number">243</span><span class="hljs-keyword">c</span><span class="hljs-number">32535</span>da<span class="hljs-number">7</span>        ubuntu:latest       <span class="hljs-string">&quot;/bin/bash&quot;</span>         <span class="hljs-number">18</span> seconds ago      Up <span class="hljs-number">17</span> seconds                           nostalgic_hypatia<br><br>$ docker attach <span class="hljs-number">243</span><span class="hljs-keyword">c</span><br>root<span class="hljs-title">@243</span><span class="hljs-keyword">c</span><span class="hljs-number">32535</span>da<span class="hljs-number">7</span>:/#<br></code></pre></td></tr></table></figure>
+<p><em>注意：</em> 如果从这个 stdin 中 exit，会导致容器的停止。</p>
+<h2 id="2-exec-命令"><a href="#2-exec-命令" class="headerlink" title="2.exec 命令"></a>2.<code>exec</code> 命令</h2><h3 id="i-t-参数"><a href="#i-t-参数" class="headerlink" title="-i -t 参数"></a>-i -t 参数</h3><p><code>docker exec</code> 后边可以跟多个参数，这里主要说明 <code>-i</code> <code>-t</code> 参数。</p>
+<p>只用 <code>-i</code> 参数时，由于没有分配伪终端，界面没有我们熟悉的 Linux 命令提示符，但命令执行结果仍然可以返回。</p>
+<p>当 <code>-i</code> <code>-t</code> 参数一起使用时，则可以看到我们熟悉的 Linux 命令提示符。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>docker run -dit ubuntu<br><span class="hljs-number">69</span>d137adef7a8a689cbcb059e94da5489d3cddd240ff675c640c8d96e84fe1f6<br><br><span class="hljs-variable">$ </span>docker container ls<br>CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES<br><span class="hljs-number">69</span>d137adef7a        <span class="hljs-symbol">ubuntu:</span>latest       <span class="hljs-string">&quot;/bin/bash&quot;</span>         <span class="hljs-number">18</span> seconds ago      Up <span class="hljs-number">17</span> seconds                           zealous_swirles<br><br><span class="hljs-variable">$ </span>docker exec -i <span class="hljs-number">69</span>d1 bash<br>ls<br>bin<br>boot<br>dev<br>...<br><br><span class="hljs-variable">$ </span>docker exec -it <span class="hljs-number">69</span>d1 bash<br>root<span class="hljs-variable">@69d137adef7a</span><span class="hljs-symbol">:/</span><span class="hljs-comment">#</span><br></code></pre></td></tr></table></figure>
+<p>如果从这个 stdin 中 exit，不会导致容器的停止。这就是为什么推荐大家使用 <code>docker exec</code> 的原因。</p>
+<p>更多参数说明请使用 <code>docker exec --help</code> 查看。</p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>Yin</li>
+    <li><strong>本文链接：</strong><a href="http://yoursite.com/2020/07/16/Docker%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%AE%B9%E5%99%A8/index.html" title="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Docker%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%AE%B9%E5%99%A8&#x2F;index.html">http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Docker%EF%BC%88%E4%B8%89%EF%BC%89%EF%BC%9A%E5%AE%B9%E5%99%A8&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+          <section class="donate">
+  <div id="qrcode-donate">
+    <img   class="lazyload" data-original="/images/theme/周杰伦.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a href="/2020/07/16/Docker%EF%BC%88%E5%9B%9B%EF%BC%89%EF%BC%9A%E4%BB%93%E5%BA%93/"><i class="iconfont iconleft"></i>Docker（四）：仓库</a>
+    <a href="/2020/07/16/Docker%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9A%E9%95%9C%E5%83%8F/">Docker（二）：镜像<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%93%8D%E4%BD%9C-Docker-%E5%AE%B9%E5%99%A8"><span class="toc-text">一、操作 Docker 容器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%90%AF%E5%8A%A8%E5%AE%B9%E5%99%A8"><span class="toc-text">二、启动容器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%96%B0%E5%BB%BA%E5%B9%B6%E5%90%AF%E5%8A%A8"><span class="toc-text">1.新建并启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%90%AF%E5%8A%A8%E5%B7%B2%E7%BB%88%E6%AD%A2%E5%AE%B9%E5%99%A8"><span class="toc-text">2.启动已终止容器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%88%E6%8A%A4%E6%80%81%E8%BF%90%E8%A1%8C"><span class="toc-text">三、守护态运行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-text">1.概述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%BB%88%E6%AD%A2%E5%AE%B9%E5%99%A8"><span class="toc-text">四、终止容器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%BF%9B%E5%85%A5%E5%AE%B9%E5%99%A8"><span class="toc-text">五、进入容器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-attach-%E5%91%BD%E4%BB%A4"><span class="toc-text">1.attach 命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-exec-%E5%91%BD%E4%BB%A4"><span class="toc-text">2.exec 命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#i-t-%E5%8F%82%E6%95%B0"><span class="toc-text">-i -t 参数</span></a></li></ol></li></ol></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="tencent://message/?Menu=yes&uin=371755747 "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#12B7F5'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconQQ "></i>
+      </a><a 
+        href="javascript:; "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#09BB07'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconwechat-fill "></i>
+      </a><a 
+        href="https://github.com/yinj51/yin.github.io "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#24292E'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:yinjingem@163.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color=#FF3B00" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail"></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+    <div class="scrollbar j-scrollbar">
+  <div class="scrollbar-current j-scrollbar-current"></div>
+</div>
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

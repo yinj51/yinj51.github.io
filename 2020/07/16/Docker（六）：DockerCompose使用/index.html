@@ -1,0 +1,750 @@
+
+
+<!DOCTYPE html>
+<html lang="en" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Docker（六）：DockerCompose使用 - Yin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="Yin">
+  <meta name="description" content="一、什么是 Docker ComposeDocker ...">
+  <meta name="author" content="Yin">
+  <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/loading.gif'
+      },
+      donate: {
+        enable: true,
+        alipay: '/images/theme/周杰伦.jpg',
+        wechat: '/images/theme/wxpay.png'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: false
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '/images/theme/welcome-image.jpg',
+          api: ''
+        },
+        motto: {
+          default: '轻轻的我走了，正如我轻轻的来。',
+          api: 'https://v2.jinrishici.com/one.json',
+          data_contents: '["data","content"]'
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'url',
+        image: '/images/theme/周杰伦.jpg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        model: 'simple'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">Docker（六）：DockerCompose使用</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/book " class="underline "> 书籍</a>
+      </li><li class="menu-item">
+        <a href="/archives " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/about " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/%E5%88%AB%E5%A2%85.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">Docker（六）：DockerCompose使用</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>July 16, 2020</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>25401</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="一、什么是-Docker-Compose"><a href="#一、什么是-Docker-Compose" class="headerlink" title="一、什么是 Docker Compose"></a>一、什么是 Docker Compose</h1><p><code>Docker Compose</code> 是 Docker 官方编排（Orchestration）项目之一，负责快速的部署分布式应用。</p>
+<h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><p><code>Compose</code> 项目是 Docker 官方的开源项目，负责实现对 Docker 容器集群的快速编排。从功能上看，跟 <code>OpenStack</code> 中的 <code>Heat</code> 十分类似。</p>
+<p>其代码目前在 <a target="_blank" rel="noopener" href="https://github.com/docker/compose">https://github.com/docker/compose</a> 上开源。</p>
+<p><code>Compose</code> 定位是 「定义和运行多个 Docker 容器的应用（Defining and running multi-container Docker applications）」，其前身是开源项目 Fig。</p>
+<p>通过第一部分中的介绍，我们知道使用一个 <code>Dockerfile</code> 模板文件，可以让用户很方便的定义一个单独的应用容器。然而，在日常工作中，经常会碰到需要多个容器相互配合来完成某项任务的情况。例如要实现一个 Web 项目，除了 Web 服务容器本身，往往还需要再加上后端的数据库服务容器，甚至还包括负载均衡容器等。</p>
+<p><code>Compose</code> 恰好满足了这样的需求。它允许用户通过一个单独的 <code>docker-compose.yml</code> 模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。</p>
+<p><code>Compose</code> 中有两个重要的概念：</p>
+<ul>
+<li>服务 (<code>service</code>)：一个应用的容器，实际上可以包括若干运行相同镜像的容器实例。</li>
+<li>项目 (<code>project</code>)：由一组关联的应用容器组成的一个完整业务单元，在 <code>docker-compose.yml</code> 文件中定义。</li>
+</ul>
+<p><code>Compose</code> 的默认管理对象是项目，通过子命令对项目中的一组容器进行便捷地生命周期管理。</p>
+<p><code>Compose</code> 项目由 Python 编写，实现上调用了 Docker 服务提供的 API 来对容器进行管理。因此，只要所操作的平台支持 Docker API，就可以在其上利用 <code>Compose</code> 来进行编排管理。</p>
+<h1 id="二、Docker-Compose-安装与卸载"><a href="#二、Docker-Compose-安装与卸载" class="headerlink" title="二、Docker Compose 安装与卸载"></a>二、Docker Compose 安装与卸载</h1><p><code>Compose</code> 支持 Linux、macOS、Windows 10 三大平台。</p>
+<p><code>Compose</code> 可以通过 Python 的包管理工具 <code>pip</code> 进行安装，也可以直接下载编译好的二进制文件使用，甚至能够直接在 Docker 容器中运行。</p>
+<p>前两种方式是传统方式，适合本地环境下安装使用；最后一种方式则不破坏系统环境，更适合云计算场景。</p>
+<p><code>Docker for Mac</code> 、<code>Docker for Windows</code> 自带 <code>docker-compose</code> 二进制文件，安装 Docker 之后可以直接使用。</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs applescript">$ docker-compose <span class="hljs-comment">--version</span><br><br>docker-compose <span class="hljs-built_in">version</span> <span class="hljs-number">1.17</span><span class="hljs-number">.1</span>, build <span class="hljs-number">6</span>d101fb<br></code></pre></td></tr></table></figure>
+<p>Linux 系统请使用以下介绍的方法安装。</p>
+<h2 id="1-二进制包"><a href="#1-二进制包" class="headerlink" title="1.二进制包"></a>1.二进制包</h2><p>在 Linux 上的也安装十分简单，从 <a target="_blank" rel="noopener" href="https://github.com/docker/compose/releases">官方 GitHub Release</a> 处直接下载编译好的二进制文件即可。</p>
+<p>例如，在 Linux 64 位系统上直接下载对应的二进制包。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ sudo curl -L https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/docker/</span>compose<span class="hljs-regexp">/releases/</span>download<span class="hljs-regexp">/1.24.0-rc1/</span>docker-compose-`uname -s`-`uname -m` -o <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br>$ sudo chmod +x <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br></code></pre></td></tr></table></figure>
+<h2 id="2-PIP-安装"><a href="#2-PIP-安装" class="headerlink" title="2.PIP 安装"></a>2.PIP 安装</h2><p><em>注：</em> <code>x86_64</code> 架构的 Linux 建议按照上边的方法下载二进制包进行安装，如果您计算机的架构是 <code>ARM</code>(例如，树莓派)，再使用 <code>pip</code> 安装。</p>
+<p>这种方式是将 Compose 当作一个 Python 应用来从 pip 源中安装。</p>
+<p>执行安装命令：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">$ sudo pip <span class="hljs-keyword">install</span> -U docker-compose<br></code></pre></td></tr></table></figure>
+<p>可以看到类似如下输出，说明安装成功。</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">Collecting docker-compose<br>  Downloading docker-compose-<span class="hljs-number">1.17</span>.<span class="hljs-number">1</span>.tar.gz (<span class="hljs-number">149</span>kB): <span class="hljs-number">149</span>kB downloaded<br>...<br>Successfully installed docker-compose cached-<span class="hljs-keyword">property</span><span class="hljs-title"> </span>requests texttable websocket-client docker-py dockerpty six enum34 backports.ssl-match-hostname ipaddress<br></code></pre></td></tr></table></figure>
+<h2 id="3-bash-补全命令"><a href="#3-bash-补全命令" class="headerlink" title="3.bash 补全命令"></a>3.bash 补全命令</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ curl -L https:<span class="hljs-regexp">//</span>raw.githubusercontent.com<span class="hljs-regexp">/docker/</span>compose<span class="hljs-regexp">/1.8.0/</span>contrib<span class="hljs-regexp">/completion/</span>bash<span class="hljs-regexp">/docker-compose &gt; /</span>etc<span class="hljs-regexp">/bash_completion.d/</span>docker-compose<br></code></pre></td></tr></table></figure>
+<h2 id="4-容器中执行"><a href="#4-容器中执行" class="headerlink" title="4.容器中执行"></a>4.容器中执行</h2><p>Compose 既然是一个 Python 应用，自然也可以直接用容器来执行它。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ curl -L https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/docker/</span>compose<span class="hljs-regexp">/releases/</span>download<span class="hljs-regexp">/1.8.0/</span>run.sh &gt; <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br>$ chmod +x <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br></code></pre></td></tr></table></figure>
+<p>实际上，查看下载的 <code>run.sh</code> 脚本内容，如下</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-builtin-name">set</span> -e<br><br><span class="hljs-attribute">VERSION</span>=<span class="hljs-string">&quot;1.8.0&quot;</span><br><span class="hljs-attribute">IMAGE</span>=<span class="hljs-string">&quot;docker/compose:<span class="hljs-variable">$VERSION</span>&quot;</span><br><br><br><span class="hljs-comment"># Setup options for connecting to docker host</span><br><span class="hljs-keyword">if</span> [ -z <span class="hljs-string">&quot;<span class="hljs-variable">$DOCKER_HOST</span>&quot;</span> ]; then<br>    <span class="hljs-attribute">DOCKER_HOST</span>=<span class="hljs-string">&quot;/var/run/docker.sock&quot;</span><br>fi<br><span class="hljs-keyword">if</span> [ -S <span class="hljs-string">&quot;<span class="hljs-variable">$DOCKER_HOST</span>&quot;</span> ]; then<br>    <span class="hljs-attribute">DOCKER_ADDR</span>=<span class="hljs-string">&quot;-v <span class="hljs-variable">$DOCKER_HOST</span>:<span class="hljs-variable">$DOCKER_HOST</span> -e DOCKER_HOST&quot;</span><br><span class="hljs-keyword">else</span><br>    <span class="hljs-attribute">DOCKER_ADDR</span>=<span class="hljs-string">&quot;-e DOCKER_HOST -e DOCKER_TLS_VERIFY -e DOCKER_CERT_PATH&quot;</span><br>fi<br><br><br><span class="hljs-comment"># Setup volume mounts for compose config and context</span><br><span class="hljs-keyword">if</span> [ <span class="hljs-string">&quot;<span class="hljs-variable">$(pwd)</span>&quot;</span> != <span class="hljs-string">&#x27;/&#x27;</span> ]; then<br>    <span class="hljs-attribute">VOLUMES</span>=<span class="hljs-string">&quot;-v <span class="hljs-variable">$(pwd)</span>:<span class="hljs-variable">$(pwd)</span>&quot;</span><br>fi<br><span class="hljs-keyword">if</span> [ -n <span class="hljs-string">&quot;<span class="hljs-variable">$COMPOSE_FILE</span>&quot;</span> ]; then<br>    <span class="hljs-attribute">compose_dir</span>=$(dirname <span class="hljs-variable">$COMPOSE_FILE</span>)<br>fi<br><span class="hljs-comment"># <span class="hljs-doctag">TODO:</span> also check --file argument</span><br><span class="hljs-keyword">if</span> [ -n <span class="hljs-string">&quot;<span class="hljs-variable">$compose_dir</span>&quot;</span> ]; then<br>    <span class="hljs-attribute">VOLUMES</span>=<span class="hljs-string">&quot;<span class="hljs-variable">$VOLUMES</span> -v <span class="hljs-variable">$compose_dir</span>:<span class="hljs-variable">$compose_dir</span>&quot;</span><br>fi<br><span class="hljs-keyword">if</span> [ -n <span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>&quot;</span> ]; then<br>    <span class="hljs-attribute">VOLUMES</span>=<span class="hljs-string">&quot;<span class="hljs-variable">$VOLUMES</span> -v <span class="hljs-variable">$HOME</span>:<span class="hljs-variable">$HOME</span> -v <span class="hljs-variable">$HOME</span>:/root&quot;</span> # mount <span class="hljs-variable">$HOME</span> <span class="hljs-keyword">in</span> /root <span class="hljs-keyword">to</span> share docker.config<br>fi<br><br><span class="hljs-comment"># Only allocate tty if we detect one</span><br><span class="hljs-keyword">if</span> [ -t 1 ]; then<br>    <span class="hljs-attribute">DOCKER_RUN_OPTIONS</span>=<span class="hljs-string">&quot;-t&quot;</span><br>fi<br><span class="hljs-keyword">if</span> [ -t 0 ]; then<br>    <span class="hljs-attribute">DOCKER_RUN_OPTIONS</span>=<span class="hljs-string">&quot;<span class="hljs-variable">$DOCKER_RUN_OPTIONS</span> -i&quot;</span><br>fi<br><br>exec docker <span class="hljs-builtin-name">run</span> --rm <span class="hljs-variable">$DOCKER_RUN_OPTIONS</span> <span class="hljs-variable">$DOCKER_ADDR</span> <span class="hljs-variable">$COMPOSE_OPTIONS</span> <span class="hljs-variable">$VOLUMES</span> -w <span class="hljs-string">&quot;<span class="hljs-variable">$(pwd)</span>&quot;</span> <span class="hljs-variable">$IMAGE</span> <span class="hljs-string">&quot;<span class="hljs-variable">$@</span>&quot;</span><br></code></pre></td></tr></table></figure>
+<p>可以看到，它其实是下载了 <code>docker/compose</code> 镜像并运行。</p>
+<h2 id="5-卸载"><a href="#5-卸载" class="headerlink" title="5.卸载"></a>5.卸载</h2><p>如果是二进制包方式安装的，删除二进制文件即可。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs awk">$ sudo rm <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br></code></pre></td></tr></table></figure>
+<p>如果是通过 <code>pip</code> 安装的，则执行如下命令即可删除。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>sudo pip uninstall docker-compose<br></code></pre></td></tr></table></figure>
+<h1 id="三、Docker-Compose-使用"><a href="#三、Docker-Compose-使用" class="headerlink" title="三、Docker Compose 使用"></a>三、Docker Compose 使用</h1><h2 id="1-术语"><a href="#1-术语" class="headerlink" title="1.术语"></a>1.术语</h2><p>首先介绍几个术语。</p>
+<ul>
+<li>服务 (<code>service</code>)：一个应用容器，实际上可以运行多个相同镜像的实例。</li>
+<li>项目 (<code>project</code>)：由一组关联的应用容器组成的一个完整业务单元。</li>
+</ul>
+<p>可见，一个项目可以由多个服务（容器）关联而成，<code>Compose</code> 面向项目进行管理。</p>
+<h2 id="2-场景"><a href="#2-场景" class="headerlink" title="2.场景"></a>2.场景</h2><p>最常见的项目是 web 网站，该项目应该包含 web 应用和缓存。</p>
+<p>下面我们用 <code>Python</code> 来建立一个能够记录页面访问次数的 web 网站。</p>
+<h3 id="1）web-应用"><a href="#1）web-应用" class="headerlink" title="1）web 应用"></a>1）web 应用</h3><p>新建文件夹，在该目录中编写 <code>app.py</code> 文件</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-keyword">from</span> flask import Flask<br><span class="hljs-keyword">from</span> redis import Redis<br><br>app = Flask(__name__)<br>redis = Redis(<span class="hljs-attribute">host</span>=<span class="hljs-string">&#x27;redis&#x27;</span>, <span class="hljs-attribute">port</span>=6379)<br><br>@app.route(<span class="hljs-string">&#x27;/&#x27;</span>)<br>def hello():<br>    count = redis.incr(<span class="hljs-string">&#x27;hits&#x27;</span>)<br>    return <span class="hljs-string">&#x27;Hello World! 该页面已被访问 &#123;&#125; 次。\n&#x27;</span>.format(count)<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    app.<span class="hljs-builtin-name">run</span>(<span class="hljs-attribute">host</span>=<span class="hljs-string">&quot;0.0.0.0&quot;</span>, <span class="hljs-attribute">debug</span>=<span class="hljs-literal">True</span>)<br></code></pre></td></tr></table></figure>
+<h3 id="2）Dockerfile"><a href="#2）Dockerfile" class="headerlink" title="2）Dockerfile"></a>2）Dockerfile</h3><p>编写 <code>Dockerfile</code> 文件，内容为</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> python:<span class="hljs-number">3.6</span>-alpine<br><span class="hljs-keyword">ADD</span><span class="bash"> . /code</span><br><span class="hljs-keyword">WORKDIR</span><span class="bash"> /code</span><br><span class="hljs-keyword">RUN</span><span class="bash"> pip install redis flask</span><br><span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">&quot;python&quot;</span>, <span class="hljs-string">&quot;app.py&quot;</span>]</span><br></code></pre></td></tr></table></figure>
+<h3 id="3）docker-compose-yml"><a href="#3）docker-compose-yml" class="headerlink" title="3）docker-compose.yml"></a>3）docker-compose.yml</h3><p>编写 <code>docker-compose.yml</code> 文件，这个是 Compose 使用的主模板文件。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&#x27;3&#x27;</span><br><span class="hljs-symbol">services:</span><br><br><span class="hljs-symbol">  web:</span><br><span class="hljs-symbol">    build:</span> .<br><span class="hljs-symbol">    ports:</span><br>     - <span class="hljs-string">&quot;5000:5000&quot;</span><br>     <br><span class="hljs-symbol">  redis:</span><br><span class="hljs-symbol">    image:</span> <span class="hljs-string">&quot;redis:alpine&quot;</span><br></code></pre></td></tr></table></figure>
+<h3 id="4）运行-compose-项目"><a href="#4）运行-compose-项目" class="headerlink" title="4）运行 compose 项目"></a>4）运行 compose 项目</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>docker-compose up<br></code></pre></td></tr></table></figure>
+<p>此时访问本地 <code>5000</code> 端口，每次刷新页面，计数就会加 1。</p>
+<h1 id="四、Docker-Compose-命令说明"><a href="#四、Docker-Compose-命令说明" class="headerlink" title="四、Docker Compose 命令说明"></a>四、Docker Compose 命令说明</h1><h2 id="1-命令对象与格式"><a href="#1-命令对象与格式" class="headerlink" title="1.命令对象与格式"></a>1.命令对象与格式</h2><p>对于 Compose 来说，大部分命令的对象既可以是项目本身，也可以指定为项目中的服务或者容器。如果没有特别的说明，命令对象将是项目，这意味着项目中所有的服务都会受到命令影响。</p>
+<p>执行 <code>docker-compose [COMMAND] --help</code> 或者 <code>docker-compose help [COMMAND]</code> 可以查看具体某个命令的使用格式。</p>
+<p><code>docker-compose</code> 命令的基本的使用格式是</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">docker-compose</span> <span class="hljs-selector-attr">[-f=&lt;arg&gt;...]</span> <span class="hljs-selector-attr">[options]</span> <span class="hljs-selector-attr">[COMMAND]</span> <span class="hljs-selector-attr">[ARGS...]</span><br></code></pre></td></tr></table></figure>
+<h2 id="2-命令选项"><a href="#2-命令选项" class="headerlink" title="2.命令选项"></a>2.命令选项</h2><ul>
+<li><code>-f, --file FILE</code> 指定使用的 Compose 模板文件，默认为 <code>docker-compose.yml</code>，可以多次指定。</li>
+<li><code>-p, --project-name NAME</code> 指定项目名称，默认将使用所在目录名称作为项目名。</li>
+<li><code>--x-networking</code> 使用 Docker 的可拔插网络后端特性</li>
+<li><code>--x-network-driver DRIVER</code> 指定网络后端的驱动，默认为 <code>bridge</code></li>
+<li><code>--verbose</code> 输出更多调试信息。</li>
+<li><code>-v, --version</code> 打印版本并退出。</li>
+</ul>
+<h2 id="3-build"><a href="#3-build" class="headerlink" title="3.build"></a>3.<code>build</code></h2><p>格式为 <code>docker-compose build [options] [SERVICE...]</code>。</p>
+<p>构建（重新构建）项目中的服务容器。</p>
+<p>服务容器一旦构建后，将会带上一个标记名，例如对于 web 项目中的一个 db 容器，可能是 web_db。</p>
+<p>可以随时在项目目录下运行 <code>docker-compose build</code> 来重新构建服务。</p>
+<p>选项包括：</p>
+<ul>
+<li><code>--force-rm</code> 删除构建过程中的临时容器。</li>
+<li><code>--no-cache</code> 构建镜像过程中不使用 cache（这将加长构建过程）。</li>
+<li><code>--pull</code> 始终尝试通过 pull 来获取更新版本的镜像。</li>
+</ul>
+<h2 id="4-config"><a href="#4-config" class="headerlink" title="4.config"></a>4.<code>config</code></h2><p>验证 Compose 文件格式是否正确，若正确则显示配置，若格式错误显示错误原因。</p>
+<h2 id="5-down"><a href="#5-down" class="headerlink" title="5.down"></a>5.<code>down</code></h2><p>此命令将会停止 <code>up</code> 命令所启动的容器，并移除网络</p>
+<h2 id="6-exec"><a href="#6-exec" class="headerlink" title="6.exec"></a>6.<code>exec</code></h2><p>进入指定的容器。</p>
+<h2 id="7-help"><a href="#7-help" class="headerlink" title="7.help"></a>7.<code>help</code></h2><p>获得一个命令的帮助。</p>
+<h2 id="8-images"><a href="#8-images" class="headerlink" title="8.images"></a>8.<code>images</code></h2><p>列出 Compose 文件中包含的镜像。</p>
+<h2 id="9-kill"><a href="#9-kill" class="headerlink" title="9.kill"></a>9.<code>kill</code></h2><p>格式为 <code>docker-compose kill [options] [SERVICE...]</code>。</p>
+<p>通过发送 <code>SIGKILL</code> 信号来强制停止服务容器。</p>
+<p>支持通过 <code>-s</code> 参数来指定发送的信号，例如通过如下指令发送 <code>SIGINT</code> 信号。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> docker<span class="hljs-literal">-compose</span> <span class="hljs-built_in">kill</span> <span class="hljs-literal">-s</span> SIGINT<br></code></pre></td></tr></table></figure>
+<h2 id="10-logs"><a href="#10-logs" class="headerlink" title="10.logs"></a>10.<code>logs</code></h2><p>格式为 <code>docker-compose logs [options] [SERVICE...]</code>。</p>
+<p>查看服务容器的输出。默认情况下，docker-compose 将对不同的服务输出使用不同的颜色来区分。可以通过 <code>--no-color</code> 来关闭颜色。</p>
+<p>该命令在调试问题的时候十分有用。</p>
+<h2 id="11-pause"><a href="#11-pause" class="headerlink" title="11.pause"></a>11.<code>pause</code></h2><p>格式为 <code>docker-compose pause [SERVICE...]</code>。</p>
+<p>暂停一个服务容器。</p>
+<h2 id="12-port"><a href="#12-port" class="headerlink" title="12.port"></a>12.<code>port</code></h2><p>格式为 <code>docker-compose port [options] SERVICE PRIVATE_PORT</code>。</p>
+<p>打印某个容器端口所映射的公共端口。</p>
+<p>选项：</p>
+<ul>
+<li><code>--protocol=proto</code> 指定端口协议，tcp（默认值）或者 udp。</li>
+<li><code>--index=index</code> 如果同一服务存在多个容器，指定命令对象容器的序号（默认为 1）。</li>
+</ul>
+<h2 id="13-ps"><a href="#13-ps" class="headerlink" title="13.ps"></a>13.<code>ps</code></h2><p>格式为 <code>docker-compose ps [options] [SERVICE...]</code>。</p>
+<p>列出项目中目前的所有容器。</p>
+<p>选项：</p>
+<ul>
+<li><code>-q</code> 只打印容器的 ID 信息。</li>
+</ul>
+<h2 id="14-pull"><a href="#14-pull" class="headerlink" title="14.pull"></a>14.<code>pull</code></h2><p>格式为 <code>docker-compose pull [options] [SERVICE...]</code>。</p>
+<p>拉取服务依赖的镜像。</p>
+<p>选项：</p>
+<ul>
+<li><code>--ignore-pull-failures</code> 忽略拉取镜像过程中的错误。</li>
+</ul>
+<h2 id="15-push"><a href="#15-push" class="headerlink" title="15.push"></a>15.<code>push</code></h2><p>推送服务依赖的镜像到 Docker 镜像仓库。</p>
+<h2 id="16-restart"><a href="#16-restart" class="headerlink" title="16.restart"></a>16.<code>restart</code></h2><p>格式为 <code>docker-compose restart [options] [SERVICE...]</code>。</p>
+<p>重启项目中的服务。</p>
+<p>选项：</p>
+<ul>
+<li><code>-t, --timeout TIMEOUT</code> 指定重启前停止容器的超时（默认为 10 秒）。</li>
+</ul>
+<h2 id="17-rm"><a href="#17-rm" class="headerlink" title="17.rm"></a>17.<code>rm</code></h2><p>格式为 <code>docker-compose rm [options] [SERVICE...]</code>。</p>
+<p>删除所有（停止状态的）服务容器。推荐先执行 <code>docker-compose stop</code> 命令来停止容器。</p>
+<p>选项：</p>
+<ul>
+<li><code>-f, --force</code> 强制直接删除，包括非停止状态的容器。一般尽量不要使用该选项。</li>
+<li><code>-v</code> 删除容器所挂载的数据卷。</li>
+</ul>
+<h2 id="18-run"><a href="#18-run" class="headerlink" title="18.run"></a>18.<code>run</code></h2><p>格式为 <code>docker-compose run [options] [-p PORT...] [-e KEY=VAL...] SERVICE [COMMAND] [ARGS...]</code>。</p>
+<p>在指定服务上执行一个命令。</p>
+<p>例如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">$ docker-compose <span class="hljs-builtin-name">run</span> ubuntu<span class="hljs-built_in"> ping </span>docker.com<br></code></pre></td></tr></table></figure>
+<p>将会启动一个 ubuntu 服务容器，并执行 <code>ping docker.com</code> 命令。</p>
+<p>默认情况下，如果存在关联，则所有关联的服务将会自动被启动，除非这些服务已经在运行中。</p>
+<p>该命令类似启动容器后运行指定的命令，相关卷、链接等等都将会按照配置自动创建。</p>
+<p>两个不同点：</p>
+<ul>
+<li>给定命令将会覆盖原有的自动运行命令；</li>
+<li>不会自动创建端口，以避免冲突。</li>
+</ul>
+<p>如果不希望自动启动关联的容器，可以使用 <code>--no-deps</code> 选项，例如</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim">$ docker-compose run --<span class="hljs-keyword">no</span>-deps web <span class="hljs-keyword">python</span> manage.<span class="hljs-keyword">py</span> <span class="hljs-keyword">shell</span><br></code></pre></td></tr></table></figure>
+<p>将不会启动 web 容器所关联的其它容器。</p>
+<p>选项：</p>
+<ul>
+<li><code>-d</code> 后台运行容器。</li>
+<li><code>--name NAME</code> 为容器指定一个名字。</li>
+<li><code>--entrypoint CMD</code> 覆盖默认的容器启动指令。</li>
+<li><code>-e KEY=VAL</code> 设置环境变量值，可多次使用选项来设置多个环境变量。</li>
+<li><code>-u, --user=&quot;&quot;</code> 指定运行容器的用户名或者 uid。</li>
+<li><code>--no-deps</code> 不自动启动关联的服务容器。</li>
+<li><code>--rm</code> 运行命令后自动删除容器，<code>d</code> 模式下将忽略。</li>
+<li><code>-p, --publish=[]</code> 映射容器端口到本地主机。</li>
+<li><code>--service-ports</code> 配置服务端口并映射到本地主机。</li>
+<li><code>-T</code> 不分配伪 tty，意味着依赖 tty 的指令将无法运行。</li>
+</ul>
+<h2 id="19-scale"><a href="#19-scale" class="headerlink" title="19.scale"></a>19.<code>scale</code></h2><p>格式为 <code>docker-compose scale [options] [SERVICE=NUM...]</code>。</p>
+<p>设置指定服务运行的容器个数。</p>
+<p>通过 <code>service=num</code> 的参数来设置数量。例如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">$ docker-compose scale <span class="hljs-attribute">web</span>=3 <span class="hljs-attribute">db</span>=2<br></code></pre></td></tr></table></figure>
+<p>将启动 3 个容器运行 web 服务，2 个容器运行 db 服务。</p>
+<p>一般的，当指定数目多于该服务当前实际运行容器，将新创建并启动容器；反之，将停止容器。</p>
+<p>选项：</p>
+<ul>
+<li><code>-t, --timeout TIMEOUT</code> 停止容器时候的超时（默认为 10 秒）。</li>
+</ul>
+<h2 id="20-start"><a href="#20-start" class="headerlink" title="20.start"></a>20.<code>start</code></h2><p>格式为 <code>docker-compose start [SERVICE...]</code>。</p>
+<p>启动已经存在的服务容器。</p>
+<h2 id="21-stop"><a href="#21-stop" class="headerlink" title="21.stop"></a>21.<code>stop</code></h2><p>格式为 <code>docker-compose stop [options] [SERVICE...]</code>。</p>
+<p>停止已经处于运行状态的容器，但不删除它。通过 <code>docker-compose start</code> 可以再次启动这些容器。</p>
+<p>选项：</p>
+<ul>
+<li><code>-t, --timeout TIMEOUT</code> 停止容器时候的超时（默认为 10 秒）。</li>
+</ul>
+<h2 id="22-top"><a href="#22-top" class="headerlink" title="22.top"></a>22.<code>top</code></h2><p>查看各个服务容器内运行的进程。</p>
+<h2 id="23-unpause"><a href="#23-unpause" class="headerlink" title="23.unpause"></a>23.<code>unpause</code></h2><p>格式为 <code>docker-compose unpause [SERVICE...]</code>。</p>
+<p>恢复处于暂停状态中的服务。</p>
+<h2 id="24-up"><a href="#24-up" class="headerlink" title="24.up"></a>24.<code>up</code></h2><p>格式为 <code>docker-compose up [options] [SERVICE...]</code>。</p>
+<p>该命令十分强大，它将尝试自动完成包括构建镜像，（重新）创建服务，启动服务，并关联服务相关容器的一系列操作。</p>
+<p>链接的服务都将会被自动启动，除非已经处于运行状态。</p>
+<p>可以说，大部分时候都可以直接通过该命令来启动一个项目。</p>
+<p>默认情况，<code>docker-compose up</code> 启动的容器都在前台，控制台将会同时打印所有容器的输出信息，可以很方便进行调试。</p>
+<p>当通过 <code>Ctrl-C</code> 停止命令时，所有容器将会停止。</p>
+<p>如果使用 <code>docker-compose up -d</code>，将会在后台启动并运行所有的容器。一般推荐生产环境下使用该选项。</p>
+<p>默认情况，如果服务容器已经存在，<code>docker-compose up</code> 将会尝试停止容器，然后重新创建（保持使用 <code>volumes-from</code> 挂载的卷），以保证新启动的服务匹配 <code>docker-compose.yml</code> 文件的最新内容。如果用户不希望容器被停止并重新创建，可以使用 <code>docker-compose up --no-recreate</code>。这样将只会启动处于停止状态的容器，而忽略已经运行的服务。如果用户只想重新部署某个服务，可以使用 <code>docker-compose up --no-deps -d &lt;SERVICE_NAME&gt;</code> 来重新创建服务并后台停止旧服务，启动新服务，并不会影响到其所依赖的服务。</p>
+<p>选项：</p>
+<ul>
+<li><code>-d</code> 在后台运行服务容器。</li>
+<li><code>--no-color</code> 不使用颜色来区分不同的服务的控制台输出。</li>
+<li><code>--no-deps</code> 不启动服务所链接的容器。</li>
+<li><code>--force-recreate</code> 强制重新创建容器，不能与 <code>--no-recreate</code> 同时使用。</li>
+<li><code>--no-recreate</code> 如果容器已经存在了，则不重新创建，不能与 <code>--force-recreate</code> 同时使用。</li>
+<li><code>--no-build</code> 不自动构建缺失的服务镜像。</li>
+<li><code>-t, --timeout TIMEOUT</code> 停止容器时候的超时（默认为 10 秒）。</li>
+</ul>
+<h2 id="25-version"><a href="#25-version" class="headerlink" title="25.version"></a>25.<code>version</code></h2><p>格式为 <code>docker-compose version</code>。</p>
+<p>打印版本信息。</p>
+<h1 id="五、Docker-Compose-模板文件"><a href="#五、Docker-Compose-模板文件" class="headerlink" title="五、Docker Compose 模板文件"></a>五、Docker Compose 模板文件</h1><p>模板文件是使用 <code>Compose</code> 的核心，涉及到的指令关键字也比较多。但大家不用担心，这里面大部分指令跟 <code>docker run</code> 相关参数的含义都是类似的。</p>
+<p>默认的模板文件名称为 <code>docker-compose.yml</code>，格式为 YAML 格式。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&quot;3&quot;</span><br><br><span class="hljs-symbol">services:</span><br><span class="hljs-symbol">  webapp:</span><br><span class="hljs-symbol">    image:</span> examples/web<br><span class="hljs-symbol">    ports:</span><br>      - <span class="hljs-string">&quot;80:80&quot;</span><br><span class="hljs-symbol">    volumes:</span><br>      - <span class="hljs-string">&quot;/data&quot;</span><br></code></pre></td></tr></table></figure>
+<p>注意每个服务都必须通过 <code>image</code> 指令指定镜像或 <code>build</code> 指令（需要 Dockerfile）等来自动构建生成镜像。</p>
+<p>如果使用 <code>build</code> 指令，在 <code>Dockerfile</code> 中设置的选项(例如：<code>CMD</code>, <code>EXPOSE</code>, <code>VOLUME</code>, <code>ENV</code> 等) 将会自动被获取，无需在 <code>docker-compose.yml</code> 中再次设置。</p>
+<p>下面分别介绍各个指令的用法。</p>
+<h2 id="1-build"><a href="#1-build" class="headerlink" title="1.build"></a>1.<code>build</code></h2><p>指定 <code>Dockerfile</code> 所在文件夹的路径（可以是绝对路径，或者相对 docker-compose.yml 文件的路径）。 <code>Compose</code> 将会利用它自动构建这个镜像，然后使用这个镜像。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&#x27;3&#x27;</span><br><span class="hljs-symbol">services:</span><br><br><span class="hljs-symbol">  webapp:</span><br><span class="hljs-symbol">    build:</span> ./dir<br></code></pre></td></tr></table></figure>
+<p>你也可以使用 <code>context</code> 指令指定 <code>Dockerfile</code> 所在文件夹的路径。</p>
+<p>使用 <code>dockerfile</code> 指令指定 <code>Dockerfile</code> 文件名。</p>
+<p>使用 <code>arg</code> 指令指定构建镜像时的变量。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&#x27;3&#x27;</span><br><span class="hljs-symbol">services:</span><br><br><span class="hljs-symbol">  webapp:</span><br><span class="hljs-symbol">    build:</span><br><span class="hljs-symbol">      context:</span> ./dir<br><span class="hljs-symbol">      dockerfile:</span> Dockerfile-alternate<br><span class="hljs-symbol">      args:</span><br><span class="hljs-symbol">        buildno:</span> <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<p>使用 <code>cache_from</code> 指定构建镜像的缓存</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-attribute">build</span>:<br>  <span class="hljs-attribute">context</span>: .<br>  <span class="hljs-attribute">cache_from</span>:<br>    - <span class="hljs-attribute">alpine</span>:latest<br>    - corp/<span class="hljs-attribute">web_app</span>:<span class="hljs-number">3.14</span><br></code></pre></td></tr></table></figure>
+<h2 id="2-cap-add-cap-drop"><a href="#2-cap-add-cap-drop" class="headerlink" title="2.cap_add, cap_drop"></a>2.<code>cap_add, cap_drop</code></h2><p>指定容器的内核能力（capacity）分配。</p>
+<p>例如，让容器拥有所有能力可以指定为：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ada">cap_add:<br>  - <span class="hljs-keyword">ALL</span><br></code></pre></td></tr></table></figure>
+<p>去掉 NET_ADMIN 能力可以指定为：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc">cap_drop:<br><span class="hljs-code">  - NET_ADMIN</span><br></code></pre></td></tr></table></figure>
+<h2 id="3-command"><a href="#3-command" class="headerlink" title="3.command"></a>3.<code>command</code></h2><p>覆盖容器启动后默认执行的命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">command</span>: <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;hello world&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="4-configs"><a href="#4-configs" class="headerlink" title="4.configs"></a>4.<code>configs</code></h2><p>仅用于 <code>Swarm mode</code></p>
+<h2 id="5-cgroup-parent"><a href="#5-cgroup-parent" class="headerlink" title="5.cgroup_parent"></a>5.<code>cgroup_parent</code></h2><p>指定父 <code>cgroup</code> 组，意味着将继承该组的资源限制。</p>
+<p>例如，创建了一个 cgroup 组名称为 <code>cgroups_1</code>。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">cgroup_parent</span>: cgroups_<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<h2 id="6-container-name"><a href="#6-container-name" class="headerlink" title="6.container_name"></a>6.<code>container_name</code></h2><p>指定容器名称。默认将会使用 <code>项目名称_服务名称_序号</code> 这样的格式。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">container_name:</span> docker-web-container<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注意: 指定容器名称后，该服务将无法进行扩展（scale），因为 Docker 不允许多个容器具有相同的名称。</p>
+</blockquote>
+<h2 id="7-deploy"><a href="#7-deploy" class="headerlink" title="7.deploy"></a>7.<code>deploy</code></h2><p>仅用于 <code>Swarm mode</code></p>
+<h2 id="8-devices"><a href="#8-devices" class="headerlink" title="8.devices"></a>8.<code>devices</code></h2><p>指定设备映射关系。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">devices:</span><br>  - <span class="hljs-string">&quot;/dev/ttyUSB1:/dev/ttyUSB0&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="9-depends-on"><a href="#9-depends-on" class="headerlink" title="9.depends_on"></a>9.<code>depends_on</code></h2><p>解决容器的依赖、启动先后的问题。以下例子中会先启动 <code>redis</code> <code>db</code> 再启动 <code>web</code></p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&#x27;3&#x27;</span><br><br><span class="hljs-symbol">services:</span><br><span class="hljs-symbol">  web:</span><br><span class="hljs-symbol">    build:</span> .<br><span class="hljs-symbol">    depends_on:</span><br>      - db<br>      - redis<br><br><span class="hljs-symbol">  redis:</span><br><span class="hljs-symbol">    image:</span> redis<br><br><span class="hljs-symbol">  db:</span><br><span class="hljs-symbol">    image:</span> postgres<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：<code>web</code> 服务不会等待 <code>redis</code> <code>db</code> 「完全启动」之后才启动。</p>
+</blockquote>
+<h2 id="10-dns"><a href="#10-dns" class="headerlink" title="10.dns"></a>10.<code>dns</code></h2><p>自定义 <code>DNS</code> 服务器。可以是一个值，也可以是一个列表。</p>
+<figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ldif"><span class="hljs-attribute">dns</span>: 8.8.8.8<br><br><span class="hljs-attribute">dns:</span><br><span class="hljs-attribute">  - 8.8.8.8</span><br><span class="hljs-attribute">  - 114.114.114.114</span><br></code></pre></td></tr></table></figure>
+<h2 id="11-dns-search"><a href="#11-dns-search" class="headerlink" title="11.dns_search"></a>11.<code>dns_search</code></h2><p>配置 <code>DNS</code> 搜索域。可以是一个值，也可以是一个列表。</p>
+<figure class="highlight ldif"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs ldif"><span class="hljs-attribute">dns_search</span>: example.com<br><br><span class="hljs-attribute">dns_search:</span><br><span class="hljs-attribute">  - domain1.example.com</span><br><span class="hljs-attribute">  - domain2.example.com</span><br></code></pre></td></tr></table></figure>
+<h2 id="12-tmpfs"><a href="#12-tmpfs" class="headerlink" title="12.tmpfs"></a>12.<code>tmpfs</code></h2><p>挂载一个 tmpfs 文件系统到容器。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs dockerfile">tmpfs: /<span class="hljs-keyword">run</span><br><span class="bash">tmpfs:</span><br>  - /<span class="hljs-keyword">run</span><br><span class="bash">  - /tmp</span><br></code></pre></td></tr></table></figure>
+<h2 id="13-env-file"><a href="#13-env-file" class="headerlink" title="13.env_file"></a>13.<code>env_file</code></h2><p>从文件中获取环境变量，可以为单独的文件路径或列表。</p>
+<p>如果通过 <code>docker-compose -f FILE</code> 方式来指定 Compose 模板文件，则 <code>env_file</code> 中变量的路径会基于模板文件路径。</p>
+<p>如果有变量名称与 <code>environment</code> 指令冲突，则按照惯例，以后者为准。</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs awk">env_file: .env<br><br>env_file:<br>  - ./common.env<br>  - .<span class="hljs-regexp">/apps/</span>web.env<br>  - <span class="hljs-regexp">/opt/</span>secrets.env<br></code></pre></td></tr></table></figure>
+<p>环境变量文件中每一行必须符合格式，支持 <code>#</code> 开头的注释行。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-comment"># common.env: Set development environment</span><br><span class="hljs-attr">PROG_ENV</span>=development<br></code></pre></td></tr></table></figure>
+<h2 id="14-environment"><a href="#14-environment" class="headerlink" title="14.environment"></a>14.<code>environment</code></h2><p>设置环境变量。你可以使用数组或字典两种格式。</p>
+<p>只给定名称的变量会自动获取运行 Compose 主机上对应变量的值，可以用来防止泄露不必要的数据。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">environment:</span><br><span class="hljs-symbol">  RACK_ENV:</span> development<br><span class="hljs-symbol">  SESSION_SECRET:</span><br><br><span class="hljs-symbol">environment:</span><br>  - RACK_ENV=development<br>  - SESSION_SECRET<br></code></pre></td></tr></table></figure>
+<p>如果变量名称或者值中用到 <code>true|false，yes|no</code> 等表达 <a target="_blank" rel="noopener" href="http://yaml.org/type/bool.html">布尔</a> 含义的词汇，最好放到引号里，避免 YAML 自动解析某些内容为对应的布尔语义。这些特定词汇，包括</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coq">y|<span class="hljs-type">Y</span>|<span class="hljs-type">yes</span>|<span class="hljs-type">Yes</span>|<span class="hljs-type">YES</span>|<span class="hljs-type">n</span>|<span class="hljs-type">N</span>|<span class="hljs-type">no</span>|<span class="hljs-type">No</span>|<span class="hljs-type">NO</span>|<span class="hljs-type">true</span>|<span class="hljs-type">True</span>|<span class="hljs-type">TRUE</span>|<span class="hljs-type">false</span>|<span class="hljs-type">False</span>|<span class="hljs-type">FALSE</span>|<span class="hljs-type">on</span>|<span class="hljs-type">On</span>|<span class="hljs-type">ON</span>|<span class="hljs-type">off</span>|<span class="hljs-type">Off</span>|<span class="hljs-type">OFF</span><br></code></pre></td></tr></table></figure>
+<h2 id="15-expose"><a href="#15-expose" class="headerlink" title="15.expose"></a>15.<code>expose</code></h2><p>暴露端口，但不映射到宿主机，只被连接的服务访问。</p>
+<p>仅可以指定内部端口为参数</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs haml">expose:<br> -<span class="ruby"> <span class="hljs-string">&quot;3000&quot;</span></span><br><span class="ruby"> - <span class="hljs-string">&quot;8000&quot;</span></span><br></code></pre></td></tr></table></figure>
+<h2 id="16-external-links"><a href="#16-external-links" class="headerlink" title="16.external_links"></a>16.<code>external_links</code></h2><blockquote>
+<p>注意：不建议使用该指令。</p>
+</blockquote>
+<p>链接到 <code>docker-compose.yml</code> 外部的容器，甚至并非 <code>Compose</code> 管理的外部容器。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><span class="hljs-attr">external_links:</span><br> - redis_1<br> - <span class="hljs-attr">project_db_1:</span>mysql<br> - <span class="hljs-attr">project_db_1:</span>postgresql<br></code></pre></td></tr></table></figure>
+<h2 id="17-extra-hosts"><a href="#17-extra-hosts" class="headerlink" title="17.extra_hosts"></a>17.<code>extra_hosts</code></h2><p>类似 Docker 中的 <code>--add-host</code> 参数，指定额外的 host 名称映射信息。</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs haml">extra_hosts:<br> -<span class="ruby"> <span class="hljs-string">&quot;googledns:8.8.8.8&quot;</span></span><br><span class="ruby"> - <span class="hljs-string">&quot;dockerhub:52.1.157.61&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p>会在启动后的服务容器中 <code>/etc/hosts</code> 文件中添加如下两条条目。</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs accesslog"><span class="hljs-number">8.8.8.8</span> googledns<br><span class="hljs-number">52.1.157.61</span> dockerhub<br></code></pre></td></tr></table></figure>
+<h2 id="18-healthcheck"><a href="#18-healthcheck" class="headerlink" title="18.healthcheck"></a>18.<code>healthcheck</code></h2><p>通过命令检查容器是否健康运行。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">healthcheck:</span><br><span class="hljs-symbol">  test:</span> [<span class="hljs-string">&quot;CMD&quot;</span>, <span class="hljs-string">&quot;curl&quot;</span>, <span class="hljs-string">&quot;-f&quot;</span>, <span class="hljs-string">&quot;http://localhost&quot;</span>]<br><span class="hljs-symbol">  interval:</span> <span class="hljs-number">1</span>m30s<br><span class="hljs-symbol">  timeout:</span> <span class="hljs-number">10</span>s<br><span class="hljs-symbol">  retries:</span> <span class="hljs-number">3</span><br></code></pre></td></tr></table></figure>
+<h2 id="19-image"><a href="#19-image" class="headerlink" title="19.image"></a>19.<code>image</code></h2><p>指定为镜像名称或镜像 ID。如果镜像在本地不存在，<code>Compose</code> 将会尝试拉取这个镜像。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs arduino"><span class="hljs-built_in">image</span>: ubuntu<br><span class="hljs-built_in">image</span>: orchardup/postgresql<br><span class="hljs-built_in">image</span>: a4bc65fd<br></code></pre></td></tr></table></figure>
+<h2 id="20-labels"><a href="#20-labels" class="headerlink" title="20.labels"></a>20.<code>labels</code></h2><p>为容器添加 Docker 元数据（metadata）信息。例如可以为容器添加辅助说明信息。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs stylus">labels:<br>  com<span class="hljs-selector-class">.startupteam</span><span class="hljs-selector-class">.description</span>: <span class="hljs-string">&quot;webapp for a startup team&quot;</span><br>  com<span class="hljs-selector-class">.startupteam</span><span class="hljs-selector-class">.department</span>: <span class="hljs-string">&quot;devops department&quot;</span><br>  com<span class="hljs-selector-class">.startupteam</span><span class="hljs-selector-class">.release</span>: <span class="hljs-string">&quot;rc3 for v1.0&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="21-links"><a href="#21-links" class="headerlink" title="21.links"></a>21.<code>links</code></h2><blockquote>
+<p>注意：不推荐使用该指令。</p>
+</blockquote>
+<h2 id="22-logging"><a href="#22-logging" class="headerlink" title="22.logging"></a>22.<code>logging</code></h2><p>配置日志选项。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-attribute">logging</span>:<br>  <span class="hljs-attribute">driver</span>: syslog<br>  <span class="hljs-attribute">options</span>:<br>    <span class="hljs-attribute">syslog-address</span>: <span class="hljs-string">&quot;tcp://192.168.0.42:123&quot;</span><br></code></pre></td></tr></table></figure>
+<p>目前支持三种日志驱动类型。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">driver:</span> <span class="hljs-string">&quot;json-file&quot;</span><br><span class="hljs-symbol">driver:</span> <span class="hljs-string">&quot;syslog&quot;</span><br><span class="hljs-symbol">driver:</span> <span class="hljs-string">&quot;none&quot;</span><br></code></pre></td></tr></table></figure>
+<p><code>options</code> 配置日志驱动的相关参数。</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-keyword">options</span>:<br>  <span class="hljs-built_in">max</span>-size: <span class="hljs-string">&quot;200k&quot;</span><br>  <span class="hljs-built_in">max</span>-<span class="hljs-keyword">file</span>: <span class="hljs-string">&quot;10&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="23-network-mode"><a href="#23-network-mode" class="headerlink" title="23.network_mode"></a>23.<code>network_mode</code></h2><p>设置网络模式。使用和 <code>docker run</code> 的 <code>--network</code> 参数一样的值。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">network_mode:</span> <span class="hljs-string">&quot;bridge&quot;</span><br><span class="hljs-symbol">network_mode:</span> <span class="hljs-string">&quot;host&quot;</span><br><span class="hljs-symbol">network_mode:</span> <span class="hljs-string">&quot;none&quot;</span><br><span class="hljs-symbol">network_mode:</span> <span class="hljs-string">&quot;service:[service name]&quot;</span><br><span class="hljs-symbol">network_mode:</span> <span class="hljs-string">&quot;container:[container name/id]&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="24-networks"><a href="#24-networks" class="headerlink" title="24.networks"></a>24.<code>networks</code></h2><p>配置容器连接的网络。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-attribute">version</span>: <span class="hljs-string">&quot;3&quot;</span><br><span class="hljs-attribute">services</span>:<br><br>  <span class="hljs-attribute">some-service</span>:<br>    <span class="hljs-attribute">networks</span>:<br>     - some-network<br>     - other-network<br><br><span class="hljs-attribute">networks</span>:<br>  <span class="hljs-attribute">some-network</span>:<br>  <span class="hljs-attribute">other-network</span>:<br><br></code></pre></td></tr></table></figure>
+<h2 id="25-pid"><a href="#25-pid" class="headerlink" title="25.pid"></a>25.<code>pid</code></h2><p>跟主机系统共享进程命名空间。打开该选项的容器之间，以及容器和宿主机系统之间可以通过进程 ID 来相互访问和操作。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">pid:</span> <span class="hljs-string">&quot;host&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="26-ports"><a href="#26-ports" class="headerlink" title="26.ports"></a>26.<code>ports</code></h2><p>暴露端口信息。</p>
+<p>使用宿主端口：容器端口 <code>(HOST:CONTAINER)</code> 格式，或者仅仅指定容器的端口（宿主将会随机选择端口）都可以。</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs haml">ports:<br> -<span class="ruby"> <span class="hljs-string">&quot;3000&quot;</span></span><br><span class="ruby"> - <span class="hljs-string">&quot;8000:8000&quot;</span></span><br><span class="ruby"> - <span class="hljs-string">&quot;49100:22&quot;</span></span><br><span class="ruby"> - <span class="hljs-string">&quot;127.0.0.1:8001:8001&quot;</span></span><br></code></pre></td></tr></table></figure>
+<p><em>注意：当使用 HOST:CONTAINER 格式来映射端口时，如果你使用的容器端口小于 60 并且没放到引号里，可能会得到错误结果，因为 YAML 会自动解析 xx:yy 这种数字格式为 60 进制。为避免出现这种问题，建议数字串都采用引号包括起来的字符串格式。</em></p>
+<h2 id="27-secrets"><a href="#27-secrets" class="headerlink" title="27.secrets"></a>27.<code>secrets</code></h2><p>存储敏感数据，例如 <code>mysql</code> 服务密码。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&quot;3.1&quot;</span><br><span class="hljs-symbol">services:</span><br><br><span class="hljs-symbol">mysql:</span><br><span class="hljs-symbol">  image:</span> mysql<br><span class="hljs-symbol">  environment:</span><br><span class="hljs-symbol">    MYSQL_ROOT_PASSWORD_FILE:</span> <span class="hljs-meta-keyword">/run/</span>secrets/db_root_password<br><span class="hljs-symbol">  secrets:</span><br>    - db_root_password<br>    - my_other_secret<br><br><span class="hljs-symbol">secrets:</span><br><span class="hljs-symbol">  my_secret:</span><br><span class="hljs-symbol">    file:</span> ./my_secret.txt<br><span class="hljs-symbol">  my_other_secret:</span><br><span class="hljs-symbol">    external:</span> true<br></code></pre></td></tr></table></figure>
+<h2 id="28-security-opt"><a href="#28-security-opt" class="headerlink" title="28.security_opt"></a>28.<code>security_opt</code></h2><p>指定容器模板标签（label）机制的默认属性（用户、角色、类型、级别等）。例如配置标签的用户名和角色名。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><span class="hljs-attr">security_opt:</span><br>    - <span class="hljs-attr">label:</span><span class="hljs-attr">user:</span>USER<br>    - <span class="hljs-attr">label:</span><span class="hljs-attr">role:</span>ROLE<br></code></pre></td></tr></table></figure>
+<h2 id="29-stop-signal"><a href="#29-stop-signal" class="headerlink" title="29.stop_signal"></a>29.<code>stop_signal</code></h2><p>设置另一个信号来停止容器。在默认情况下使用的是 SIGTERM 停止容器。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">stop_signal</span>: SIGUSR<span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<h2 id="30-sysctls"><a href="#30-sysctls" class="headerlink" title="30.sysctls"></a>30.<code>sysctls</code></h2><p>配置容器内核参数。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">sysctls:<br>  net<span class="hljs-selector-class">.core</span><span class="hljs-selector-class">.somaxconn</span>: <span class="hljs-number">1024</span><br>  net<span class="hljs-selector-class">.ipv4</span><span class="hljs-selector-class">.tcp_syncookies</span>: <span class="hljs-number">0</span><br><br>sysctls:<br>  - net<span class="hljs-selector-class">.core</span>.somaxconn=<span class="hljs-number">1024</span><br>  - net<span class="hljs-selector-class">.ipv4</span>.tcp_syncookies=<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
+<h2 id="31-ulimits"><a href="#31-ulimits" class="headerlink" title="31.ulimits"></a>31.<code>ulimits</code></h2><p>指定容器的 ulimits 限制值。</p>
+<p>例如，指定最大进程数为 65535，指定文件句柄数为 20000（软限制，应用可以随时修改，不能超过硬限制） 和 40000（系统硬限制，只能 root 用户提高）。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">ulimits:</span><br><span class="hljs-symbol">  nproc:</span> <span class="hljs-number">65535</span><br><span class="hljs-symbol">  nofile:</span><br><span class="hljs-symbol">    soft:</span> <span class="hljs-number">20000</span><br><span class="hljs-symbol">    hard:</span> <span class="hljs-number">40000</span><br></code></pre></td></tr></table></figure>
+<h2 id="32-volumes"><a href="#32-volumes" class="headerlink" title="32.volumes"></a>32.<code>volumes</code></h2><p>数据卷所挂载路径设置。可以设置宿主机路径 （<code>HOST:CONTAINER</code>） 或加上访问模式 （<code>HOST:CONTAINER:ro</code>）。</p>
+<p>该指令中路径支持相对路径。</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs haml">volumes:<br> -<span class="ruby"> /var/lib/mysql</span><br><span class="ruby"> - cache/<span class="hljs-symbol">:/tmp/cache</span></span><br><span class="ruby"> - ~<span class="hljs-regexp">/configs:/etc</span><span class="hljs-regexp">/configs/</span><span class="hljs-symbol">:ro</span></span><br></code></pre></td></tr></table></figure>
+<h2 id="33-其它指令"><a href="#33-其它指令" class="headerlink" title="33.其它指令"></a>33.其它指令</h2><p>此外，还有包括 <code>domainname, entrypoint, hostname, ipc, mac_address, privileged, read_only, shm_size, restart, stdin_open, tty, user, working_dir</code> 等指令，基本跟 <code>docker run</code> 中对应参数的功能一致。</p>
+<p>指定服务容器启动后执行的入口文件。</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arcade">entrypoint: <span class="hljs-regexp">/code/</span>entrypoint.sh<br></code></pre></td></tr></table></figure>
+<p>指定容器中运行应用的用户名。</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">user:</span> nginx<br></code></pre></td></tr></table></figure>
+<p>指定容器中工作目录。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs armasm"><span class="hljs-symbol">working_dir:</span> /<span class="hljs-meta">code</span><br></code></pre></td></tr></table></figure>
+<p>指定容器中搜索域名、主机名、mac 地址等。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">domainname</span>: your_website.com<br><span class="hljs-attribute">hostname</span>: test<br><span class="hljs-attribute">mac_address</span>: <span class="hljs-number">08</span>-<span class="hljs-number">00</span>-<span class="hljs-number">27</span>-<span class="hljs-number">00</span>-<span class="hljs-number">0</span>C-<span class="hljs-number">0</span>A<br></code></pre></td></tr></table></figure>
+<p>允许容器中运行一些特权命令。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">privileged:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<p>指定容器退出后的重启策略为始终重启。该命令对保持服务始终运行十分有效，在生产环境中推荐配置为 <code>always</code> 或者 <code>unless-stopped</code>。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">restart</span>: <span class="hljs-keyword">always</span><br></code></pre></td></tr></table></figure>
+<p>以只读模式挂载容器的 root 文件系统，意味着不能对容器内容进行修改。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">read_only:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<p>打开标准输入，可以接受外部输入。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">stdin_open:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<p>模拟一个伪终端。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">tty:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<h2 id="34-读取变量"><a href="#34-读取变量" class="headerlink" title="34.读取变量"></a>34.读取变量</h2><p>Compose 模板文件支持动态读取主机的系统环境变量和当前目录下的 <code>.env</code> 文件中的变量。</p>
+<p>例如，下面的 Compose 文件将从运行它的环境中读取变量 <code>$&#123;MONGO_VERSION&#125;</code> 的值，并写入执行的指令中。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">version:</span> <span class="hljs-string">&quot;3&quot;</span><br><span class="hljs-symbol">services:</span><br><br><span class="hljs-symbol">db:</span><br><span class="hljs-symbol">  image:</span> <span class="hljs-string">&quot;mongo:$&#123;MONGO_VERSION&#125;&quot;</span><br></code></pre></td></tr></table></figure>
+<p>如果执行 <code>MONGO_VERSION=3.2 docker-compose up</code> 则会启动一个 <code>mongo:3.2</code> 镜像的容器；如果执行 <code>MONGO_VERSION=2.8 docker-compose up</code> 则会启动一个 <code>mongo:2.8</code> 镜像的容器。</p>
+<p>若当前目录存在 <code>.env</code> 文件，执行 <code>docker-compose</code> 命令时将从该文件中读取变量。</p>
+<p>在当前目录新建 <code>.env</code> 文件并写入以下内容。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-comment"># 支持 # 号注释</span><br><span class="hljs-attribute">MONGO_VERSION</span>=<span class="hljs-number">3</span>.<span class="hljs-number">6</span><br></code></pre></td></tr></table></figure>
+<p>执行 <code>docker-compose up</code> 则会启动一个 <code>mongo:3.6</code> 镜像的容器。</p>
+<h1 id="六、Docker-Compose-实战-Tomcat"><a href="#六、Docker-Compose-实战-Tomcat" class="headerlink" title="六、Docker Compose 实战 Tomcat"></a>六、Docker Compose 实战 Tomcat</h1><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs elixir"><span class="hljs-symbol">version:</span> <span class="hljs-string">&#x27;3.1&#x27;</span><br><span class="hljs-symbol">services:</span><br>  <span class="hljs-symbol">tomcat:</span><br>    <span class="hljs-symbol">restart:</span> always<br>    <span class="hljs-symbol">image:</span> tomcat<br>    <span class="hljs-symbol">container_name:</span> tomcat<br>    <span class="hljs-symbol">ports:</span><br>      - <span class="hljs-number">8080</span><span class="hljs-symbol">:</span><span class="hljs-number">8080</span><br>    <span class="hljs-symbol">volumes:</span><br>      - <span class="hljs-regexp">/usr/local</span><span class="hljs-regexp">/docker/tomcat</span><span class="hljs-regexp">/webapps/test</span><span class="hljs-symbol">:/usr/local/tomcat/webapps/test</span><br>    <span class="hljs-symbol">environment:</span><br>      <span class="hljs-symbol">TZ:</span> Asia/Shanghai<br></code></pre></td></tr></table></figure>
+<h1 id="七、Docker-Compose-实战-MySQL"><a href="#七、Docker-Compose-实战-MySQL" class="headerlink" title="七、Docker Compose 实战 MySQL"></a>七、Docker Compose 实战 MySQL</h1><h2 id="1-MySQL5"><a href="#1-MySQL5" class="headerlink" title="1.MySQL5"></a>1.MySQL5</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">version</span>: <span class="hljs-string">&#x27;3.1&#x27;</span><br>service<span class="hljs-variable">s:</span><br>  mysq<span class="hljs-variable">l:</span><br>    restar<span class="hljs-variable">t:</span> always<br>    image: mysq<span class="hljs-variable">l:5</span>.<span class="hljs-number">7.25</span><br>    container_name: mysql<br>    port<span class="hljs-variable">s:</span><br>      - <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span><br>    environmen<span class="hljs-variable">t:</span><br>      TZ: Asia/Shanghai<br>      MYSQL_ROOT_PASSWORD: <span class="hljs-number">123</span><br>    <span class="hljs-keyword">command</span>:<br>      --character-<span class="hljs-keyword">set</span>-server=utf8mb4<br>      --collation-server=utf8mb4_general_ci<br>      --explicit_defaults_for_timestamp=true<br>      --lower_case_table_names=<span class="hljs-number">1</span><br>      --max_allowed_packet=<span class="hljs-number">128</span>M<br>      --sql-<span class="hljs-keyword">mode</span>=<span class="hljs-string">&quot;STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO&quot;</span><br>    volume<span class="hljs-variable">s:</span><br>      - mysql-dat<span class="hljs-variable">a:</span>/var/lib/mysql<br><br>volume<span class="hljs-variable">s:</span><br>  mysql-dat<span class="hljs-variable">a:</span><br></code></pre></td></tr></table></figure>
+<h2 id="2-MySQL8"><a href="#2-MySQL8" class="headerlink" title="2.MySQL8"></a>2.MySQL8</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;3.1&#x27;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">db:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">mysql</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>    <span class="hljs-attr">environment:</span><br>      <span class="hljs-attr">MYSQL_ROOT_PASSWORD:</span> <span class="hljs-number">123456</span><br>    <span class="hljs-attr">command:</span><br>      <span class="hljs-string">--default-authentication-plugin=mysql_native_password</span><br>      <span class="hljs-string">--character-set-server=utf8mb4</span><br>      <span class="hljs-string">--collation-server=utf8mb4_general_ci</span><br>      <span class="hljs-string">--explicit_defaults_for_timestamp=true</span><br>      <span class="hljs-string">--lower_case_table_names=1</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">3306</span><span class="hljs-string">:3306</span><br>    <span class="hljs-attr">volumes:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">./data:/var/lib/mysql</span><br><br>  <span class="hljs-attr">adminer:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">adminer</span><br>    <span class="hljs-attr">restart:</span> <span class="hljs-string">always</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-number">8080</span><span class="hljs-string">:8080</span><br></code></pre></td></tr></table></figure>
+<h1 id="八、Docker-Compose-部署项目到容器"><a href="#八、Docker-Compose-部署项目到容器" class="headerlink" title="八、Docker Compose 部署项目到容器"></a>八、Docker Compose 部署项目到容器</h1><h1 id="九、Docker-Compose-常用命令"><a href="#九、Docker-Compose-常用命令" class="headerlink" title="九、Docker Compose 常用命令"></a>九、Docker Compose 常用命令</h1><h2 id="1-前台运行"><a href="#1-前台运行" class="headerlink" title="1.前台运行"></a>1.前台运行</h2><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker-compose up</span><br></code></pre></td></tr></table></figure>
+<h2 id="2-后台运行"><a href="#2-后台运行" class="headerlink" title="2.后台运行"></a>2.后台运行</h2><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker-compose up -d</span><br></code></pre></td></tr></table></figure>
+<h2 id="3-启动"><a href="#3-启动" class="headerlink" title="3.启动"></a>3.启动</h2><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">docker-compose <span class="hljs-literal">start</span><br></code></pre></td></tr></table></figure>
+<h2 id="4-停止"><a href="#4-停止" class="headerlink" title="4.停止"></a>4.停止</h2><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs arduino">docker-compose <span class="hljs-built_in">stop</span><br></code></pre></td></tr></table></figure>
+<h2 id="5-停止并移除容器"><a href="#5-停止并移除容器" class="headerlink" title="5.停止并移除容器"></a>5.停止并移除容器</h2><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">docker-compose down</span><br></code></pre></td></tr></table></figure>
+<h1 id="十、YAML-配置文件语言"><a href="#十、YAML-配置文件语言" class="headerlink" title="十、YAML 配置文件语言"></a>十、YAML 配置文件语言</h1><h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>YAML 是专门用来写配置文件的语言   ，非常简洁和强大，远比 JSON 格式方便。</p>
+<p>YAML 语言的设计目标，就是方便人类读写。它实质上是一种通用的数据串行化格式。它的基本语法规则如下：</p>
+<ul>
+<li>大小写敏感</li>
+<li>使用缩进表示层级关系</li>
+<li>缩进时不允许使用Tab键，只允许使用空格。</li>
+<li>缩进的空格数目不重要，只要相同层级的元素左侧对齐即可</li>
+</ul>
+<p><code>#</code> 表示注释，从这个字符一直到行尾，都会被解析器忽略。</p>
+<p>YAML 支持的数据结构有三种：</p>
+<ul>
+<li>对象：键值对的集合，又称为映射（mapping）/ 哈希（hashes） / 字典（dictionary）</li>
+<li>数组：一组按次序排列的值，又称为序列（sequence） / 列表（list）</li>
+<li>纯量（scalars）：单个的、不可再分的值</li>
+</ul>
+<h2 id="2-对象"><a href="#2-对象" class="headerlink" title="2.对象"></a>2.对象</h2><p>对象的一组键值对，使用冒号结构表示</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs avrasm"><span class="hljs-symbol">animal:</span> pets<br></code></pre></td></tr></table></figure>
+<h2 id="3-数组"><a href="#3-数组" class="headerlink" title="3.数组"></a>3.数组</h2><p>一组连词线开头的行，构成一个数组</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs asciidoc"><span class="hljs-bullet">- </span>Cat<br><span class="hljs-bullet">- </span>Dog<br><span class="hljs-bullet">- </span>Goldfish<br></code></pre></td></tr></table></figure>
+<p>数据结构的子成员是一个数组，则可以在该项下面缩进一个空格</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-bullet">-</span> Array<br><span class="hljs-bullet"> -</span> Cat<br><span class="hljs-bullet"> -</span> Dog<br><span class="hljs-bullet"> -</span> Goldfish<br></code></pre></td></tr></table></figure>
+<h2 id="4-复合结构"><a href="#4-复合结构" class="headerlink" title="4.复合结构"></a>4.复合结构</h2><p>对象和数组可以结合使用，形成复合结构</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">language</span><span class="hljs-variable">s:</span><br> - Ruby<br> - Perl<br> - Python <br>website<span class="hljs-variable">s:</span><br> YAML: yaml.org <br> Ruby: <span class="hljs-keyword">ruby</span>-lang.org <br> Python: <span class="hljs-keyword">python</span>.org <br> Per<span class="hljs-variable">l:</span> use.<span class="hljs-keyword">perl</span>.org <br></code></pre></td></tr></table></figure>
+<h2 id="5-纯量"><a href="#5-纯量" class="headerlink" title="5.纯量"></a>5.纯量</h2><p>纯量是最基本的、不可再分的值。以下数据类型都属于 JavaScript 的纯量</p>
+<ul>
+<li>字符串</li>
+<li>布尔值</li>
+<li>整数</li>
+<li>浮点数</li>
+<li>Null</li>
+<li>时间</li>
+<li>日期</li>
+</ul>
+<h1 id="附：为什么说-JSON-不适合做配置文件？"><a href="#附：为什么说-JSON-不适合做配置文件？" class="headerlink" title="附：为什么说 JSON 不适合做配置文件？"></a>附：为什么说 JSON 不适合做配置文件？</h1><blockquote>
+<p>很多项目使用 JSON 作为配置文件，最明显的例子就是 npm 和 yarn 使用的 package.json 文件。当然，还有很多其他文件，例如 CloudFormation（最初只有 JSON，但现在也支持 YAML）和 composer（PHP）。</p>
+</blockquote>
+<p>但是，JSON 实际上是一种非常糟糕的配置语言。别误会我的意思，我其实是喜欢 JSON 的。它是一种相对灵活的文本格式，对于机器和人类来说都很容易阅读，而且是一种非常好的数据交换和存储格式。但作为一种配置语言，它有它的不足。</p>
+<h2 id="1-为什么流行使用-JSON-作为配置语言？"><a href="#1-为什么流行使用-JSON-作为配置语言？" class="headerlink" title="1.为什么流行使用 JSON 作为配置语言？"></a>1.为什么流行使用 JSON 作为配置语言？</h2><p>将 JSON 用作配置文件有几个方面的原因，其中最大的原因可能是它很容易实现。很多编程语言的标准库都支持 JSON，开发人员或用户可能已经很熟悉 JSON，所以不需要学习新的配置格式就可以使用那些产品。现在几乎所有的工具都提供 JSON 支持，包括语法突出显示、自动格式化、验证工具等。</p>
+<p>这些都是很好的理由，但这种无处不在的格式其实不适合用作配置。</p>
+<h2 id="2-JSON-的问题"><a href="#2-JSON-的问题" class="headerlink" title="2.JSON 的问题"></a>2.JSON 的问题</h2><h3 id="1）缺乏注释"><a href="#1）缺乏注释" class="headerlink" title="1）缺乏注释"></a>1）缺乏注释</h3><p>注释对于配置语言而言绝对是一个重要的功能。注释可用于标注不同的配置选项、解释为什么要配置成特定的值，更重要的是，在使用不同的配置进行测试和调试时需要临时注释掉部分配置。当然，如果只是把 JSON 当作是一种数据交换格式，那么就不需要用到注释。</p>
+<p>我们可以通过一些方法给 JSON 添加注释。一种常见的方法是在对象中使用特殊的键作为注释，例如“//”或“__comment”。但是，这种语法的可读性不高，并且为了在单个对象中包含多个注释，需要为每个注释使用唯一的键。David Crockford（JSON 的发明者）建议使用预处理器来删除注释。如果你的应用程序需要使用 JSON 作为配置，那么完全没问题，不过这确实带来了一些额外的工作量。</p>
+<p>一些 JSON 库允许将注释作为输入。例如，Ruby 的 JSON 模块和启用了 JsonParser.Feature.ALLOW_COMMENTS 功能的 Java Jackson 库可以处理 JavaScript 风格的注释。但是，这不是标准的方式，而且很多编辑器无法正确处理 JSON 文件中的注释，这让编辑它们变得更加困难。</p>
+<h3 id="2）过于严格"><a href="#2）过于严格" class="headerlink" title="2）过于严格"></a>2）过于严格</h3><p>JSON 规范非常严格，这也是为什么实现 JSON 解析器会这么简单，但在我看来，它还会影响可读性，并且在较小程度上会影响可写性。</p>
+<h3 id="3）低信噪比"><a href="#3）低信噪比" class="headerlink" title="3）低信噪比"></a>3）低信噪比</h3><p>与其他配置语言相比，JSON 显得非常嘈杂。JSON 的很多标点符号对可读性毫无帮助，况且，对象中的键几乎都是标识符，所以键的引号其实是多余的。</p>
+<p>此外，JSON 需要使用花括号将整个文档包围起来，所以 JSON 是 JavaScript 的子集，并在流中发送多个对象时用于界定不同的对象。但是，对于配置文件来说，最外面的大括号其实没有任何用处。在配置文件中，键值对之间的逗号也是没有必要的。通常情况下，每行只有一个键值对，所以使用换行作为分隔符更有意义。</p>
+<p>说到逗号，JSON 居然不允许在结尾出现逗号。如果你需要在每个键值对之后使用逗号，那么至少应该接受结尾的逗号，因为有了结尾的逗号，在添加新条目时会更容易，而且在进行 commit diff 时也更清晰。</p>
+<h3 id="4）长字符串"><a href="#4）长字符串" class="headerlink" title="4）长字符串"></a>4）长字符串</h3><p>JSON 作为配置格式的另一个问题是，它不支持多行字符串。如果你想在字符串中换行，必须使用 “\n” 进行转义，更糟糕的是，如果你想要一个字符串在文件中另起一行显示，那就彻底没办法了。如果你的配置项里没有很长的字符串，那就不是问题。但是，如果你的配置项里包括了长字符串，例如项目描述或 GPG 密钥，你可能不希望只是使用 “\n” 来转义而不是使用真实的换行符。</p>
+<h3 id="5）数字"><a href="#5）数字" class="headerlink" title="5）数字"></a>5）数字</h3><p>此外，在某些情况下，JSON 对数字的定义可能会有问题。JSON 规范中将数字定义成使用十进制表示的任意精度有限浮点数。对于大多数应用程序来说，这没有问题。但是，如果你需要使用十六进制表示法或表示无穷大或 NaN 等值时，那么 TOML 或 YAML 将能够更好地处理它们。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;example&quot;</span>,<br>  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;A really long description that needs multiple lines.\nThis is a sample project to illustrate why JSON is not a good configuration format. This description is pretty long, but it doesn&#x27;t have any way to go onto multiple lines.&quot;</span>,<br>  <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.0.1&quot;</span>,<br>  <span class="hljs-attr">&quot;main&quot;</span>: <span class="hljs-string">&quot;index.js&quot;</span>,<br>  <span class="hljs-attr">&quot;//&quot;</span>: <span class="hljs-string">&quot;This is as close to a comment as you are going to get&quot;</span>,<br>  <span class="hljs-attr">&quot;keywords&quot;</span>: [<span class="hljs-string">&quot;example&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>],<br>  <span class="hljs-attr">&quot;scripts&quot;</span>: &#123;<br>    <span class="hljs-attr">&quot;test&quot;</span>: <span class="hljs-string">&quot;./test.sh&quot;</span>,<br>    <span class="hljs-attr">&quot;do_stuff&quot;</span>: <span class="hljs-string">&quot;./do_stuff.sh&quot;</span><br>  &#125;,<br>  <span class="hljs-attr">&quot;bugs&quot;</span>: &#123;<br>    <span class="hljs-attr">&quot;url&quot;</span>: <span class="hljs-string">&quot;https://example.com/bugs&quot;</span><br>  &#125;,<br>  <span class="hljs-attr">&quot;contributors&quot;</span>: [&#123;<br>    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;John Doe&quot;</span>,<br>    <span class="hljs-attr">&quot;email&quot;</span>: <span class="hljs-string">&quot;johndoe@example.com&quot;</span><br>  &#125;, &#123;<br>    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ivy Lane&quot;</span>,<br>    <span class="hljs-attr">&quot;url&quot;</span>: <span class="hljs-string">&quot;https://example.com/ivylane&quot;</span><br>  &#125;],<br>  <span class="hljs-attr">&quot;dependencies&quot;</span>: &#123;<br>    <span class="hljs-attr">&quot;dep1&quot;</span>: <span class="hljs-string">&quot;^1.0.0&quot;</span>,<br>    <span class="hljs-attr">&quot;dep2&quot;</span>: <span class="hljs-string">&quot;3.40&quot;</span>,<br>    <span class="hljs-attr">&quot;dep3&quot;</span>: <span class="hljs-string">&quot;6.7&quot;</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="2-JSON-的替代方案"><a href="#2-JSON-的替代方案" class="headerlink" title="2.JSON 的替代方案"></a>2.JSON 的替代方案</h2><p>选择哪一种配置语言取决于你的应用程序。每种语言都有各自的优缺点，下面列出了一些可以考虑的选项。它们都是为配置而设计的语言，每一种都比 JSON 这样的数据语言更好。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">name</span> = <span class="hljs-string">&quot;example&quot;</span><br><span class="hljs-attr">description</span> = <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">A really long description that needs multiple lines.</span><br><span class="hljs-string">This is a sample project to illustrate why JSON is not a \</span><br><span class="hljs-string">good configuration format. This description is pretty long, \</span><br><span class="hljs-string">but it doesn&#x27;t have any way to go onto multiple lines.&quot;&quot;&quot;</span><br><br><span class="hljs-attr">version</span> = <span class="hljs-string">&quot;0.0.1&quot;</span><br><span class="hljs-attr">main</span> = <span class="hljs-string">&quot;index.js&quot;</span><br><span class="hljs-comment"># This is a comment</span><br><span class="hljs-attr">keywords</span> = [<span class="hljs-string">&quot;example&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>]<br><br><span class="hljs-section">[bugs]</span><br><span class="hljs-attr">url</span> = <span class="hljs-string">&quot;https://example.com/bugs&quot;</span><br><br><span class="hljs-section">[scripts]</span><br><br><span class="hljs-attr">test</span> = <span class="hljs-string">&quot;./test.sh&quot;</span><br><span class="hljs-attr">do_stuff</span> = <span class="hljs-string">&quot;./do_stuff.sh&quot;</span><br><br><span class="hljs-section">[[contributors]]</span><br><span class="hljs-attr">name</span> = <span class="hljs-string">&quot;John Doe&quot;</span><br><span class="hljs-attr">email</span> = <span class="hljs-string">&quot;johndow@example.com&quot;</span><br><br><span class="hljs-section">[[contributors]]</span><br><span class="hljs-attr">name</span> = <span class="hljs-string">&quot;Ivy Lane&quot;</span><br><span class="hljs-attr">url</span> = <span class="hljs-string">&quot;https://example.com/ivylane&quot;</span><br><br><span class="hljs-section">[dependencies]</span><br><span class="hljs-attr">dep1</span> = <span class="hljs-string">&quot;^1.0.0&quot;</span><br><span class="hljs-comment"># Why we depend on dep2</span><br><span class="hljs-attr">dep2</span> = <span class="hljs-string">&quot;3.40&quot;</span><br><span class="hljs-attr">dep3</span> = <span class="hljs-string">&quot;6.7&quot;</span><br></code></pre></td></tr></table></figure>
+<h3 id="1）HJSON"><a href="#1）HJSON" class="headerlink" title="1）HJSON"></a>1）HJSON</h3><p>HJSON 是一种基于 JSON 的格式，但具有更大的灵活性，可读性也更强。它支持注释、多行字符串、不带引号的键和字符串，以及可选的逗号。如果你想要 JSON 结构的简单性，同时对配置文件更友好，那么可以考虑 HJSON。有一些可以将 HJSON 转换为 JSON 的命令行工具，如果你使用的工具是基于 JSON 的，可以先用 HJSON 编写配置，然后再转换成 JSON。JSON5 是另一个与 HJSON 非常相似的配置语言。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs less">&#123;<br>  <span class="hljs-attribute">name</span>: example<br>  <span class="hljs-attribute">description</span>: <span class="hljs-string">&#x27;&#x27;</span>&#x27;<br>  A really long description that needs multiple lines.<br>  This is a sample project to illustrate why JSON is <br>  not a good configuration format.  This description <br>  is pretty long, but it doesn&#x27;t have any way to go <br>  onto multiple lines.<br>  <span class="hljs-string">&#x27;&#x27;</span>&#x27;<br>  <span class="hljs-attribute">version</span>: <span class="hljs-number">0.0</span>.<span class="hljs-number">1</span><br>  <span class="hljs-attribute">main</span>: index.js<br>  # This is a a comment<br>  <span class="hljs-attribute">keywords</span>: [<span class="hljs-string">&quot;example&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>]<br>  <span class="hljs-attribute">scripts</span>: &#123;<br>    <span class="hljs-attribute">test</span>: ./test.sh<br>    <span class="hljs-attribute">do_stuff</span>: ./do_stuff.sh<br>  &#125;<br>  <span class="hljs-attribute">bugs</span>: &#123;<br>    <span class="hljs-attribute">url</span>: <span class="hljs-attribute">https</span>:<span class="hljs-comment">//example.com/bugs</span><br>  &#125;<br>  <span class="hljs-attribute">contributors</span>: [&#123;<br>    <span class="hljs-attribute">name</span>: John Doe<br>    <span class="hljs-attribute">email</span>: johndoe<span class="hljs-variable">@example</span>.com<br>  &#125; &#123;<br>    <span class="hljs-attribute">name</span>: Ivy Lane<br>    <span class="hljs-attribute">url</span>: <span class="hljs-attribute">https</span>:<span class="hljs-comment">//example.com/ivylane</span><br>  &#125;]<br>  <span class="hljs-attribute">dependencies</span>: &#123;<br>    <span class="hljs-attribute">dep1</span>: ^<span class="hljs-number">1.0</span>.<span class="hljs-number">0</span><br>    # Why we have this dependency<br>    <span class="hljs-attribute">dep2</span>: <span class="hljs-string">&quot;3.40&quot;</span><br>    <span class="hljs-attribute">dep3</span>: <span class="hljs-string">&quot;6.7&quot;</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="2）HOCON"><a href="#2）HOCON" class="headerlink" title="2）HOCON"></a>2）HOCON</h3><p>HOCON 是为 Play 框架设计的配置格式，在 Scala 项目中非常流行。它是 JSON 的超集，因此可以使用现有的 JSON 文件。除了注释、可选逗号和多行字符串这些标准特性外，HOCON 还支持从其他文件导入和引用其他值的键，避免重复代码，并使用以点作为分隔符的键来指定值的路径，因此用户可以不必将所有值直接放在花括号对象中。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs nix"><span class="hljs-attr">name</span> = example<br><span class="hljs-attr">description</span> = <span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot;</span><br><span class="hljs-string">A really long description that needs multiple lines.</span><br><span class="hljs-string">This is a sample project to illustrate why JSON is </span><br><span class="hljs-string">not a good configuration format.  This description </span><br><span class="hljs-string">is pretty long, but it doesn&#x27;t have any way to go </span><br><span class="hljs-string">onto multiple lines.</span><br><span class="hljs-string">&quot;</span><span class="hljs-string">&quot;&quot;</span><br><span class="hljs-attr">version</span> = <span class="hljs-number">0.0</span>.<span class="hljs-number">1</span><br><span class="hljs-attr">main</span> = index.js<br><span class="hljs-comment"># This is a a comment</span><br><span class="hljs-attr">keywords</span> = [<span class="hljs-string">&quot;example&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>]<br>scripts &#123;<br>  <span class="hljs-attr">test</span> = ./test.sh<br>  <span class="hljs-attr">do_stuff</span> = ./do_stuff.sh<br>&#125;<br>bugs.<span class="hljs-attr">url</span> = <span class="hljs-string">&quot;https://example.com/bugs&quot;</span><br><span class="hljs-attr">contributors</span> = [<br>  &#123;<br>    <span class="hljs-attr">name</span> = John Doe<br>    <span class="hljs-attr">email</span> = johndoe@example.com<br>  &#125;<br>  &#123;<br>    <span class="hljs-attr">name</span> = Ivy Lane<br>    <span class="hljs-attr">url</span> = <span class="hljs-string">&quot;https://example.com/ivylane&quot;</span><br>  &#125;<br>]<br>dependencies &#123;<br>  <span class="hljs-attr">dep1</span> = ^<span class="hljs-number">1.0</span>.<span class="hljs-number">0</span><br>  <span class="hljs-comment"># Why we have this dependency</span><br>  <span class="hljs-attr">dep2</span> = <span class="hljs-string">&quot;3.40&quot;</span><br>  <span class="hljs-attr">dep3</span> = <span class="hljs-string">&quot;6.7&quot;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="3）YAML"><a href="#3）YAML" class="headerlink" title="3）YAML"></a>3）YAML</h3><p>YAML（YAML 不是标记语言）是一种非常灵活的格式，几乎是 JSON 的超集，已经被用在一些著名的项目中，如 Travis CI、Circle CI 和 AWS CloudFormation。YAML 的库几乎和 JSON 一样无处不在。除了支持注释、换行符分隔、多行字符串、裸字符串和更灵活的类型系统之外，YAML 也支持引用文件，以避免重复代码。</p>
+<p>YAML 的主要缺点是规范非常复杂，不同的实现之间可能存在不一致的情况。它将缩进视为严格语法的一部分（类似于 Python），有些人喜欢，有些人不喜欢。这会让复制和粘贴变得很麻烦。</p>
+<h3 id="4）脚本语言"><a href="#4）脚本语言" class="headerlink" title="4）脚本语言"></a>4）脚本语言</h3><p>如果你的应用程序是使用 Python 或 Ruby 等脚本语言开发的，并且你知道配置的来源是可靠的，那么最好的选择可能就是使用这些语言进行配置。如果你需要一个真正灵活的配置选项，也可以在编译语言中嵌入诸如 Lua 之类的脚本语言。这样可以获得脚本语言的灵活性，而且比使用不同的配置语言更容易实现。使用脚本语言的缺点是它可能过于强大，当然，如果配置来源是不受信任的，可能会引入严重的安全问题。</p>
+<h3 id="5）自定义配置格式"><a href="#5）自定义配置格式" class="headerlink" title="5）自定义配置格式"></a>5）自定义配置格式</h3><p>如果由于某种原因，键值配置格式不能满足你的要求，并且由于性能或大小限制而无法使用脚本语言，那么可以考虑自定义配置格式。如果是这种情况，那么在做出选择之前要想清楚，因为你不仅要编写和维护一个解析器，还要让你的用户熟悉另一种配置格式。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>有了这么多更好的配置语言，没有理由还要使用 JSON。如果要创建需要用到配置的新应用程序、框架或库，请选择 JSON 以外的其他选项。</p>
+<p>英文原文：<a target="_blank" rel="noopener" href="https://www.lucidchart.com/techblog/2018/07/16/why-json-isnt-a-good-configuration-language/">https://www.lucidchart.com/techblog/2018/07/16/why-json-isnt-a-good-configuration-language/</a></p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>Yin</li>
+    <li><strong>本文链接：</strong><a href="http://yoursite.com/2020/07/16/Docker%EF%BC%88%E5%85%AD%EF%BC%89%EF%BC%9ADockerCompose%E4%BD%BF%E7%94%A8/index.html" title="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Docker%EF%BC%88%E5%85%AD%EF%BC%89%EF%BC%9ADockerCompose%E4%BD%BF%E7%94%A8&#x2F;index.html">http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;16&#x2F;Docker%EF%BC%88%E5%85%AD%EF%BC%89%EF%BC%9ADockerCompose%E4%BD%BF%E7%94%A8&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+          <section class="donate">
+  <div id="qrcode-donate">
+    <img   class="lazyload" data-original="/images/theme/周杰伦.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DockerCompose/" rel="tag">DockerCompose</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Dockerfile/" rel="tag">Dockerfile</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JSON/" rel="tag">JSON</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/YAML/" rel="tag">YAML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%8D%B7/" rel="tag">数据卷</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a href="/2020/07/18/Actor-%E6%A8%A1%E5%9E%8B/"><i class="iconfont iconleft"></i>Actor-模型</a>
+    <a href="/2020/07/16/Docker%EF%BC%88%E4%BA%94%EF%BC%89%EF%BC%9A%E5%AE%9E%E6%88%98/">Docker（五）：实战<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF-Docker-Compose"><span class="toc-text">一、什么是 Docker Compose</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-text">1.概述</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Docker-Compose-%E5%AE%89%E8%A3%85%E4%B8%8E%E5%8D%B8%E8%BD%BD"><span class="toc-text">二、Docker Compose 安装与卸载</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8C%85"><span class="toc-text">1.二进制包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-PIP-%E5%AE%89%E8%A3%85"><span class="toc-text">2.PIP 安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-bash-%E8%A1%A5%E5%85%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">3.bash 补全命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%B9%E5%99%A8%E4%B8%AD%E6%89%A7%E8%A1%8C"><span class="toc-text">4.容器中执行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%8D%B8%E8%BD%BD"><span class="toc-text">5.卸载</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81Docker-Compose-%E4%BD%BF%E7%94%A8"><span class="toc-text">三、Docker Compose 使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9C%AF%E8%AF%AD"><span class="toc-text">1.术语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9C%BA%E6%99%AF"><span class="toc-text">2.场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89web-%E5%BA%94%E7%94%A8"><span class="toc-text">1）web 应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89Dockerfile"><span class="toc-text">2）Dockerfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89docker-compose-yml"><span class="toc-text">3）docker-compose.yml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E8%BF%90%E8%A1%8C-compose-%E9%A1%B9%E7%9B%AE"><span class="toc-text">4）运行 compose 项目</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Docker-Compose-%E5%91%BD%E4%BB%A4%E8%AF%B4%E6%98%8E"><span class="toc-text">四、Docker Compose 命令说明</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%91%BD%E4%BB%A4%E5%AF%B9%E8%B1%A1%E4%B8%8E%E6%A0%BC%E5%BC%8F"><span class="toc-text">1.命令对象与格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%91%BD%E4%BB%A4%E9%80%89%E9%A1%B9"><span class="toc-text">2.命令选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-build"><span class="toc-text">3.build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-config"><span class="toc-text">4.config</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-down"><span class="toc-text">5.down</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-exec"><span class="toc-text">6.exec</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-help"><span class="toc-text">7.help</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-images"><span class="toc-text">8.images</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-kill"><span class="toc-text">9.kill</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-logs"><span class="toc-text">10.logs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-pause"><span class="toc-text">11.pause</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-port"><span class="toc-text">12.port</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-ps"><span class="toc-text">13.ps</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-pull"><span class="toc-text">14.pull</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-push"><span class="toc-text">15.push</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-restart"><span class="toc-text">16.restart</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-rm"><span class="toc-text">17.rm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-run"><span class="toc-text">18.run</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-scale"><span class="toc-text">19.scale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#20-start"><span class="toc-text">20.start</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-stop"><span class="toc-text">21.stop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#22-top"><span class="toc-text">22.top</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#23-unpause"><span class="toc-text">23.unpause</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#24-up"><span class="toc-text">24.up</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#25-version"><span class="toc-text">25.version</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81Docker-Compose-%E6%A8%A1%E6%9D%BF%E6%96%87%E4%BB%B6"><span class="toc-text">五、Docker Compose 模板文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-build"><span class="toc-text">1.build</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-cap-add-cap-drop"><span class="toc-text">2.cap_add, cap_drop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-command"><span class="toc-text">3.command</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-configs"><span class="toc-text">4.configs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-cgroup-parent"><span class="toc-text">5.cgroup_parent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-container-name"><span class="toc-text">6.container_name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-deploy"><span class="toc-text">7.deploy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-devices"><span class="toc-text">8.devices</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-depends-on"><span class="toc-text">9.depends_on</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-dns"><span class="toc-text">10.dns</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-dns-search"><span class="toc-text">11.dns_search</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-tmpfs"><span class="toc-text">12.tmpfs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-env-file"><span class="toc-text">13.env_file</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-environment"><span class="toc-text">14.environment</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-expose"><span class="toc-text">15.expose</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-external-links"><span class="toc-text">16.external_links</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-extra-hosts"><span class="toc-text">17.extra_hosts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-healthcheck"><span class="toc-text">18.healthcheck</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-image"><span class="toc-text">19.image</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#20-labels"><span class="toc-text">20.labels</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-links"><span class="toc-text">21.links</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#22-logging"><span class="toc-text">22.logging</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#23-network-mode"><span class="toc-text">23.network_mode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#24-networks"><span class="toc-text">24.networks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#25-pid"><span class="toc-text">25.pid</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#26-ports"><span class="toc-text">26.ports</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#27-secrets"><span class="toc-text">27.secrets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#28-security-opt"><span class="toc-text">28.security_opt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#29-stop-signal"><span class="toc-text">29.stop_signal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#30-sysctls"><span class="toc-text">30.sysctls</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#31-ulimits"><span class="toc-text">31.ulimits</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#32-volumes"><span class="toc-text">32.volumes</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#33-%E5%85%B6%E5%AE%83%E6%8C%87%E4%BB%A4"><span class="toc-text">33.其它指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#34-%E8%AF%BB%E5%8F%96%E5%8F%98%E9%87%8F"><span class="toc-text">34.读取变量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81Docker-Compose-%E5%AE%9E%E6%88%98-Tomcat"><span class="toc-text">六、Docker Compose 实战 Tomcat</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83%E3%80%81Docker-Compose-%E5%AE%9E%E6%88%98-MySQL"><span class="toc-text">七、Docker Compose 实战 MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-MySQL5"><span class="toc-text">1.MySQL5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-MySQL8"><span class="toc-text">2.MySQL8</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB%E3%80%81Docker-Compose-%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE%E5%88%B0%E5%AE%B9%E5%99%A8"><span class="toc-text">八、Docker Compose 部署项目到容器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B9%9D%E3%80%81Docker-Compose-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">九、Docker Compose 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E5%8F%B0%E8%BF%90%E8%A1%8C"><span class="toc-text">1.前台运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C"><span class="toc-text">2.后台运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%90%AF%E5%8A%A8"><span class="toc-text">3.启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%81%9C%E6%AD%A2"><span class="toc-text">4.停止</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%81%9C%E6%AD%A2%E5%B9%B6%E7%A7%BB%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="toc-text">5.停止并移除容器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8D%81%E3%80%81YAML-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%AD%E8%A8%80"><span class="toc-text">十、YAML 配置文件语言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="toc-text">1.简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AF%B9%E8%B1%A1"><span class="toc-text">2.对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%95%B0%E7%BB%84"><span class="toc-text">3.数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%A4%8D%E5%90%88%E7%BB%93%E6%9E%84"><span class="toc-text">4.复合结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BA%AF%E9%87%8F"><span class="toc-text">5.纯量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%99%84%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4-JSON-%E4%B8%8D%E9%80%82%E5%90%88%E5%81%9A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%9F"><span class="toc-text">附：为什么说 JSON 不适合做配置文件？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B5%81%E8%A1%8C%E4%BD%BF%E7%94%A8-JSON-%E4%BD%9C%E4%B8%BA%E9%85%8D%E7%BD%AE%E8%AF%AD%E8%A8%80%EF%BC%9F"><span class="toc-text">1.为什么流行使用 JSON 作为配置语言？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-JSON-%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">2.JSON 的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E7%BC%BA%E4%B9%8F%E6%B3%A8%E9%87%8A"><span class="toc-text">1）缺乏注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E8%BF%87%E4%BA%8E%E4%B8%A5%E6%A0%BC"><span class="toc-text">2）过于严格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E4%BD%8E%E4%BF%A1%E5%99%AA%E6%AF%94"><span class="toc-text">3）低信噪比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E9%95%BF%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">4）长字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E6%95%B0%E5%AD%97"><span class="toc-text">5）数字</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-JSON-%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88"><span class="toc-text">2.JSON 的替代方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89HJSON"><span class="toc-text">1）HJSON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89HOCON"><span class="toc-text">2）HOCON</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89YAML"><span class="toc-text">3）YAML</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80"><span class="toc-text">4）脚本语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F"><span class="toc-text">5）自定义配置格式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-text">结论</span></a></li></ol></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="tencent://message/?Menu=yes&uin=371755747 "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#12B7F5'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconQQ "></i>
+      </a><a 
+        href="javascript:; "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#09BB07'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconwechat-fill "></i>
+      </a><a 
+        href="https://github.com/yinj51/yin.github.io "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#24292E'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:yinjingem@163.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color=#FF3B00" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail"></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+    <div class="scrollbar j-scrollbar">
+  <div class="scrollbar-current j-scrollbar-current"></div>
+</div>
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

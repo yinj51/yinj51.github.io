@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<html lang="en" color-mode=light>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>注解@Async解决异步调用问题 - Yin</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+  <meta name="keywords" content="Yin">
+  <meta name="description" content="序言：Spring中@Async根据Spring的文档...">
+  <meta name="author" content="Yin">
+  <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+    
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_s6x2xcokxrl.css">
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+    
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css" name="highlight-style" mode="light">
+
+      
+        
+        
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/solarized-dark.min.css" name="highlight-style" mode="dark">
+
+      
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        only_post: 'false',
+        loading: '/images/theme/loading.gif'
+      },
+      donate: {
+        enable: true,
+        alipay: '/images/theme/周杰伦.jpg',
+        wechat: '/images/theme/wxpay.png'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        always_show: false
+      },
+      carrier: {
+        enable: false
+      },
+      daovoice: {
+        enable: false
+      },
+      preview: {
+        background: {
+          default: '/images/theme/welcome-image.jpg',
+          api: ''
+        },
+        motto: {
+          default: '轻轻的我走了，正如我轻轻的来。',
+          api: 'https://v2.jinrishici.com/one.json',
+          data_contents: '["data","content"]'
+        },
+      },
+      qrcode: {
+        enable: true,
+        type: 'url',
+        image: '/images/theme/周杰伦.jpg',
+      },
+      toc: {
+        enable: true
+      },
+      scrollbar: {
+        model: 'simple'
+      },
+      notification: {
+        enable: false,
+        delay: 4500,
+        list: '',
+        page_white_list: '',
+        page_black_list: ''
+      }
+    }
+  </script>
+
+  
+
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+  <nav class="navbar">
+    <div class="left">
+      
+        <i class="iconfont iconqrcode j-navbar-qrcode"></i>
+      
+      
+        <i class="iconfont iconmoono" id="color-toggle" color-toggle="light"></i>
+      
+    </div>
+    <div class="center">注解@Async解决异步调用问题</div>
+    <div class="right">
+      <i class="iconfont iconmenu j-navbar-menu"></i>
+    </div>
+    
+      <div id="qrcode-navbar"></div>
+    
+  </nav>
+
+  
+
+<nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content"><li class="menu-item">
+        <a href="/ " class="underline "> 首页</a>
+      </li><li class="menu-item">
+        <a href="/book " class="underline "> 书籍</a>
+      </li><li class="menu-item">
+        <a href="/archives " class="underline "> 归档</a>
+      </li><li class="menu-item">
+        <a href="/tags " class="underline "> 标签</a>
+      </li><li class="menu-item">
+        <a href="/about " class="underline "> 关于</a>
+      </li></ul>
+    
+      <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+    
+  </div>
+</nav>
+  <main id="main">
+  <div class="article-wrap">
+    <div class="row container">
+      <div class="col-xl-3"></div>
+      <div class="col-xl-6"><article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/theme/%E5%8F%A4%E5%BB%BA%E7%AD%91.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">注解@Async解决异步调用问题</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>October 09, 2020</span>
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>5709</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h2 id="序言：Spring中-Async"><a href="#序言：Spring中-Async" class="headerlink" title="序言：Spring中@Async"></a>序言：Spring中@Async</h2><p>根据Spring的文档说明，默认采用的是单线程的模式的。所以在Java应用中，绝大多数情况下都是通过同步的方式来实现交互处理的。</p>
+<p>那么当多个任务的执行势必会相互影响。例如，如果A任务执行时间比较长，那么B任务必须等到A任务执行完毕后才会启动执行。又如在处理与第三方系统交互的时候，容易造成响应迟缓的情况，之前大部分都是使用多线程来完成此类任务，其实，在<code>spring3.x</code>之后，已经内置了@Async来完美解决这个问题。</p>
+<h2 id="1-何为异步调用？"><a href="#1-何为异步调用？" class="headerlink" title="1. 何为异步调用？"></a>1. 何为异步调用？</h2><p>在解释之前，我们先来看二者的定义：</p>
+<h3 id="同步调用：顺序执行，需等待上一个任务执行完毕"><a href="#同步调用：顺序执行，需等待上一个任务执行完毕" class="headerlink" title="同步调用：顺序执行，需等待上一个任务执行完毕"></a>同步调用：顺序执行，需等待上一个任务执行完毕</h3><p>就是整个处理过程顺序执行，当各个过程都执行完毕，并返回结果。</p>
+<h3 id="异步调用：接收到指令就执行，无需等待"><a href="#异步调用：接收到指令就执行，无需等待" class="headerlink" title="异步调用：接收到指令就执行，无需等待"></a>异步调用：接收到指令就执行，无需等待</h3><p>则是只是发送了调用的指令，调用者无需等待被调用的方法完全执行完毕；而是继续执行下面的流程。</p>
+<p>例如， 在某个调用中，需要顺序调用A,B,C三个过程方法：<br>如他们都是同步调用，则需要将他们都顺序执行完毕之后，方算作过程执行完毕；如B为一个异步的调用方法，则在执行完A之后，调用B，并不等待B完成，而是执行开始调用C，待C执行完毕之后，就意味着这个过程执行完毕了。</p>
+<p>如图所示：<br><img   class="lazyload" data-original="1.png" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  alt="img"></p>
+<h2 id="2-常规的异步调用处理方式"><a href="#2-常规的异步调用处理方式" class="headerlink" title="2. 常规的异步调用处理方式"></a>2. 常规的异步调用处理方式</h2><p>在Java中，一般在处理类似的场景之时，都是基于创建独立的线程去完成相应的异步调用逻辑，通过主线程和不同的线程之间的执行流程，从而在启动独立的线程之后，主线程继续执行而不会产生停滞等待的情况。或是使用TaskExecutor执行异步线程，参看<a target="_blank" rel="noopener" href="http://www.cnblogs.com/wihainan/p/6098970.html">http://www.cnblogs.com/wihainan/p/6098970.html</a></p>
+<h2 id="3-如何在Spring中启用-Async？"><a href="#3-如何在Spring中启用-Async？" class="headerlink" title="3. 如何在Spring中启用@Async？"></a>3. 如何在Spring中启用@Async？</h2><h3 id="3-0、-Async介绍"><a href="#3-0、-Async介绍" class="headerlink" title="3.0、@Async介绍"></a>3.0、@Async介绍</h3><p>在Spring中，基于@Async标注的方法，称之为异步方法；这些方法在执行的时候，将会在独立的线程中被执行，调用者无需等待它的完成，即可继续其他的操作。</p>
+<h3 id="3-1、启用-Async注解"><a href="#3-1、启用-Async注解" class="headerlink" title="3.1、启用@Async注解"></a>3.1、启用<code>@Async</code>注解</h3><h4 id="3-1-1、基于Java配置的启用方式："><a href="#3-1-1、基于Java配置的启用方式：" class="headerlink" title="3.1.1、基于Java配置的启用方式："></a>3.1.1、基于Java配置的启用方式：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Configuration</span>  <br><span class="hljs-meta">@EnableAsync</span>  <br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SpringAsyncConfig</span> </span>&#123; ... &#125;  <br></code></pre></td></tr></table></figure>
+<h4 id="3-1-2、基于SpringBoot配置的启用方式："><a href="#3-1-2、基于SpringBoot配置的启用方式：" class="headerlink" title="3.1.2、基于SpringBoot配置的启用方式："></a>3.1.2、基于SpringBoot配置的启用方式：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@SpringBootApplication</span><br><span class="hljs-meta">@EnableAsync</span><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SpringBootApplication</span> </span>&#123;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> </span>&#123;<br>        SpringApplication.run(SpringBootApplication.class, args);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="3-2、使用-Async注解，声明方法为异步调用"><a href="#3-2、使用-Async注解，声明方法为异步调用" class="headerlink" title="3.2、使用@Async注解，声明方法为异步调用"></a>3.2、使用<code>@Async</code>注解，声明方法为异步调用</h3><h4 id="3-2-0、在无返回值方法上使用："><a href="#3-2-0、在无返回值方法上使用：" class="headerlink" title="3.2.0、在无返回值方法上使用："></a>3.2.0、在无返回值方法上使用：</h4><p>在方法上申明为异步调用方法即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Async</span> <span class="hljs-comment">//标注使用</span><br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">downloadFile</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>&#123; ... &#125; <br></code></pre></td></tr></table></figure>
+<h4 id="3-2-1、在有返回值方法上使用："><a href="#3-2-1、在有返回值方法上使用：" class="headerlink" title="3.2.1、在有返回值方法上使用："></a>3.2.1、在有返回值方法上使用：</h4><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-meta">@Async</span>  <br><span class="hljs-keyword">public</span> Future&lt;<span class="hljs-built_in">String</span>&gt; <span class="hljs-function"><span class="hljs-title">asyncMethodWithReturnType</span>(<span class="hljs-params"></span>)</span> &#123;  <br>    System.out.println(<span class="hljs-string">&quot;Execute method asynchronously - &quot;</span>  + Thread.currentThread().getName());  <br>    <span class="hljs-keyword">try</span> &#123;  <br>        Thread.sleep(<span class="hljs-number">5000</span>);  <br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> AsyncResult&lt;<span class="hljs-built_in">String</span>&gt;(<span class="hljs-string">&quot;hello world !!!!&quot;</span>);  <br>    &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;  <br>        <span class="hljs-comment">//  </span><br>    &#125;  <br>   <br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>以上示例可以发现，返回的数据类型为Future类型，其为一个接口。具体的结果类型为AsyncResult,这个是需要注意的地方。</p>
+<p>调用返回结果的异步方法示例:</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs reasonml">public void test<span class="hljs-constructor">AsyncAnnotationForMethodsWithReturnType()</span>  <br>   throws InterruptedException, ExecutionException &#123;  <br>    <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>out.println(<span class="hljs-string">&quot;Invoking an asynchronous method. &quot;</span>   + <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Thread</span>.</span></span>current<span class="hljs-constructor">Thread()</span>.get<span class="hljs-constructor">Name()</span>);  <br>    Future&lt;String&gt; future = asyncAnnotationExample.async<span class="hljs-constructor">MethodWithReturnType()</span>;  <br>   <br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;  <span class="hljs-comment">///这里使用了循环判断，等待获取结果信息  </span><br>        <span class="hljs-keyword">if</span> (future.is<span class="hljs-constructor">Done()</span>) &#123;  <span class="hljs-comment">//判断是否执行完毕  </span><br>            <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>out.println(<span class="hljs-string">&quot;Result from asynchronous process - &quot;</span> + future.get<span class="hljs-literal">()</span>);  <br>            break;  <br>        &#125;  <br>        <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">System</span>.</span></span>out.println(<span class="hljs-string">&quot;Continue doing something else. &quot;</span>);  <br>        <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Thread</span>.</span></span>sleep(<span class="hljs-number">1000</span>);  <br>    &#125;  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这些获取异步方法的结果信息，是通过不停的检查Future的状态来获取当前的异步方法是否执行完毕来实现的。</p>
+<h2 id="4-基于-Async调用中的异常处理机制"><a href="#4-基于-Async调用中的异常处理机制" class="headerlink" title="4. 基于@Async调用中的异常处理机制"></a>4. 基于@Async调用中的异常处理机制</h2><p>在异步方法中，如果出现异常，对于调用者caller而言，是无法感知的。如果确实需要进行异常处理，则按照如下方法来进行处理：</p>
+<ul>
+<li><p>自定义实现AsyncTaskExecutor的任务执行器<br>在这里定义处理具体异常的逻辑和方式。</p>
+</li>
+<li><p>配置由自定义的TaskExecutor替代内置的任务执行器</p>
+<p>示例步骤1，自定义的TaskExecutor</p>
+</li>
+</ul>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExceptionHandlingAsyncTaskExecutor</span> <span class="hljs-title">implements</span> <span class="hljs-title">AsyncTaskExecutor</span> </span>&#123;  <br>    <span class="hljs-keyword">private</span> AsyncTaskExecutor executor;  <br>    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-title">ExceptionHandlingAsyncTaskExecutor</span>(<span class="hljs-params">AsyncTaskExecutor executor</span>)</span> &#123;  <br>        <span class="hljs-built_in">this</span>.executor = executor;  <br>     &#125;  <br>      <span class="hljs-comment">////用独立的线程来包装，@Async其本质就是如此  </span><br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">void</span> <span class="hljs-function"><span class="hljs-title">execute</span>(<span class="hljs-params">Runnable task</span>)</span> &#123;       <br>      executor.execute(createWrappedRunnable(task));  <br>    &#125;  <br>    <span class="hljs-keyword">public</span> <span class="hljs-built_in">void</span> <span class="hljs-function"><span class="hljs-title">execute</span>(<span class="hljs-params">Runnable task, long startTimeout</span>)</span> &#123;  <br>        /用独立的线程来包装，<span class="hljs-meta">@Async</span>其本质就是如此  <br>       executor.execute(createWrappedRunnable(task), startTimeout);           <br>    &#125;   <br>    <span class="hljs-keyword">public</span> Future <span class="hljs-function"><span class="hljs-title">submit</span>(<span class="hljs-params">Runnable task</span>)</span> &#123; <span class="hljs-keyword">return</span> executor.submit(createWrappedRunnable(task));  <br>       <span class="hljs-comment">//用独立的线程来包装，@Async其本质就是如此。  </span><br>    &#125;   <br>    <span class="hljs-keyword">public</span> Future <span class="hljs-function"><span class="hljs-title">submit</span>(<span class="hljs-params">final Callable task</span>)</span> &#123;  <br>      <span class="hljs-comment">//用独立的线程来包装，@Async其本质就是如此。  </span><br>       <span class="hljs-keyword">return</span> executor.submit(createCallable(task));   <br>    &#125;   <br>      <br>    <span class="hljs-keyword">private</span> Callable <span class="hljs-function"><span class="hljs-title">createCallable</span>(<span class="hljs-params">final Callable task</span>)</span> &#123;   <br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-function"><span class="hljs-title">Callable</span>(<span class="hljs-params"></span>)</span> &#123;   <br>            <span class="hljs-keyword">public</span> T call() throws Exception &#123;   <br>                 <span class="hljs-keyword">try</span> &#123;   <br>                     <span class="hljs-keyword">return</span> task.call();   <br>                 &#125; <span class="hljs-keyword">catch</span> (Exception ex) &#123;   <br>                     handle(ex);   <br>                     <span class="hljs-keyword">throw</span> ex;   <br>                   &#125;   <br>                 &#125;   <br>        &#125;;   <br>    &#125;  <br>  <br>    <span class="hljs-keyword">private</span> Runnable <span class="hljs-function"><span class="hljs-title">createWrappedRunnable</span>(<span class="hljs-params">final Runnable task</span>)</span> &#123;   <br>         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-function"><span class="hljs-title">Runnable</span>(<span class="hljs-params"></span>)</span> &#123;   <br>             <span class="hljs-keyword">public</span> <span class="hljs-built_in">void</span> <span class="hljs-function"><span class="hljs-title">run</span>(<span class="hljs-params"></span>)</span> &#123;   <br>                 <span class="hljs-keyword">try</span> &#123;  <br>                     task.run();   <br>                  &#125; <span class="hljs-keyword">catch</span> (Exception ex) &#123;   <br>                     handle(ex);   <br>                   &#125;   <br>            &#125;  <br>        &#125;;   <br>    &#125;   <br>    <span class="hljs-keyword">private</span> <span class="hljs-built_in">void</span> <span class="hljs-function"><span class="hljs-title">handle</span>(<span class="hljs-params">Exception ex</span>)</span> &#123;  <br>      <span class="hljs-comment">//具体的异常逻辑处理的地方  </span><br>      System.err.println(<span class="hljs-string">&quot;Error during @Async execution: &quot;</span> + ex);  <br>    &#125;  <br>&#125;<br></code></pre></td></tr></table></figure>
+<p>分析： 可以发现其是实现了AsyncTaskExecutor, 用独立的线程来执行具体的每个方法操作。在createCallable和createWrapperRunnable中，定义了异常的处理方式和机制。</p>
+<p><code>handle()</code>就是未来我们需要关注的异常处理的地方。<br>xml配置文件中的内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">task:annotation-driven</span> <span class="hljs-attr">executor</span>=<span class="hljs-string">&quot;exceptionHandlingTaskExecutor&quot;</span> <span class="hljs-attr">scheduler</span>=<span class="hljs-string">&quot;defaultTaskScheduler&quot;</span> /&gt;</span>  <br><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;exceptionHandlingTaskExecutor&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;nl.jborsje.blog.examples.ExceptionHandlingAsyncTaskExecutor&quot;</span>&gt;</span>  <br>    <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;defaultTaskExecutor&quot;</span> /&gt;</span>  <br><span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>  <br><span class="hljs-tag">&lt;<span class="hljs-name">task:executor</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;defaultTaskExecutor&quot;</span> <span class="hljs-attr">pool-size</span>=<span class="hljs-string">&quot;5&quot;</span> /&gt;</span>  <br><span class="hljs-tag">&lt;<span class="hljs-name">task:scheduler</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;defaultTaskScheduler&quot;</span> <span class="hljs-attr">pool-size</span>=<span class="hljs-string">&quot;1&quot;</span> /&gt;</span><br></code></pre></td></tr></table></figure>
+<p>也可以使用注解的形式将其配置注册到bean中。</p>
+<h2 id="5-Async调用中的事务处理机制"><a href="#5-Async调用中的事务处理机制" class="headerlink" title="5. @Async调用中的事务处理机制"></a>5. @Async调用中的事务处理机制</h2><p>在<code>@Async</code>标注的方法，同时也使用<code>@Transactional</code>进行标注；在其调用数据库操作之时，将无法产生事务管理的控制，原因就在于其是基于异步处理的操作。</p>
+<p>那该如何给这些操作添加事务管理呢？</p>
+<p>可以将需要事务管理操作的方法放置到异步方法内部，在内部被调用的方法上添加<code>@Transactional</code></p>
+<h3 id="示例："><a href="#示例：" class="headerlink" title="示例："></a>示例：</h3><p><strong>方法A，</strong> 使用了<code>@Async</code>/<code>@Transactional</code>来标注，但是无法产生事务控制的目的。</p>
+<p><strong>方法B，</strong> 使用了<code>@Async</code>来标注，B中调用了C、D，C/D分别使用<code>@Transactional</code>做了标注，则可实现事务控制的目的。</p>
+
+      </section>
+      <section class="extra">
+        
+          <ul class="copyright">
+  
+    <li><strong>本文作者：</strong>Yin</li>
+    <li><strong>本文链接：</strong><a href="http://yoursite.com/2020/10/09/%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3/index.html" title="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;10&#x2F;09&#x2F;%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3&#x2F;index.html">http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;10&#x2F;09&#x2F;%E5%BC%82%E6%AD%A5%E6%B3%A8%E8%A7%A3&#x2F;index.html</a></li>
+    <li><strong>版权声明：</strong>本博客所有文章均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" title="BY-NC-SA" target="_blank" rel="noopener">BY-NC-SA</a> 许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+          <section class="donate">
+  <div id="qrcode-donate">
+    <img   class="lazyload" data-original="/images/theme/周杰伦.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" >
+  </div>
+  <div class="icon">
+    <a href="javascript:;" id="alipay"><i class="iconfont iconalipay"></i></a>
+    <a href="javascript:;" id="wechat"><i class="iconfont iconwechat-fill"></i></a>
+  </div>
+</section>
+        
+        
+  <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Async/" rel="tag">Async</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JAVA/" rel="tag">JAVA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E6%AD%A5/" rel="tag">异步</a></li></ul> 
+
+        
+  <nav class="nav">
+    <a href="/2020/10/10/SpringCloud%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E5%85%A5%E9%97%A8/"><i class="iconfont iconleft"></i>SpringCloud应该怎么入门</a>
+    <a href="/2020/07/31/PaChong1/">23个Python爬虫开源项目代码：爬取微信、淘宝、豆瓣、知乎、微博等<i class="iconfont iconright"></i></a>
+  </nav>
+
+      </section>
+      
+    </section>
+  </div>
+</article></div>
+      <div class="col-xl-3">
+        
+          
+  <aside class="toc-wrap">
+    <h3 class="toc-title">文章目录：</h3>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80%EF%BC%9ASpring%E4%B8%AD-Async"><span class="toc-text">序言：Spring中@Async</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BD%95%E4%B8%BA%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8%EF%BC%9F"><span class="toc-text">1. 何为异步调用？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E8%B0%83%E7%94%A8%EF%BC%9A%E9%A1%BA%E5%BA%8F%E6%89%A7%E8%A1%8C%EF%BC%8C%E9%9C%80%E7%AD%89%E5%BE%85%E4%B8%8A%E4%B8%80%E4%B8%AA%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C%E5%AE%8C%E6%AF%95"><span class="toc-text">同步调用：顺序执行，需等待上一个任务执行完毕</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8%EF%BC%9A%E6%8E%A5%E6%94%B6%E5%88%B0%E6%8C%87%E4%BB%A4%E5%B0%B1%E6%89%A7%E8%A1%8C%EF%BC%8C%E6%97%A0%E9%9C%80%E7%AD%89%E5%BE%85"><span class="toc-text">异步调用：接收到指令就执行，无需等待</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B8%B8%E8%A7%84%E7%9A%84%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F"><span class="toc-text">2. 常规的异步调用处理方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E5%9C%A8Spring%E4%B8%AD%E5%90%AF%E7%94%A8-Async%EF%BC%9F"><span class="toc-text">3. 如何在Spring中启用@Async？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-0%E3%80%81-Async%E4%BB%8B%E7%BB%8D"><span class="toc-text">3.0、@Async介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E3%80%81%E5%90%AF%E7%94%A8-Async%E6%B3%A8%E8%A7%A3"><span class="toc-text">3.1、启用@Async注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2%E3%80%81%E4%BD%BF%E7%94%A8-Async%E6%B3%A8%E8%A7%A3%EF%BC%8C%E5%A3%B0%E6%98%8E%E6%96%B9%E6%B3%95%E4%B8%BA%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8"><span class="toc-text">3.2、使用@Async注解，声明方法为异步调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%9F%BA%E4%BA%8E-Async%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-text">4. 基于@Async调用中的异常处理机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Async%E8%B0%83%E7%94%A8%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="toc-text">5. @Async调用中的事务处理机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="toc-text">示例：</span></a></li></ol></li></ol>
+  </aside>
+
+        
+      </div>
+    </div>
+  </div>
+</main>
+  
+
+<footer class="footer">
+  <div class="footer-social"><a 
+        href="tencent://message/?Menu=yes&uin=371755747 "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#12B7F5'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconQQ "></i>
+      </a><a 
+        href="javascript:; "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#09BB07'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconwechat-fill "></i>
+      </a><a 
+        href="https://github.com/yinj51/yin.github.io "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color= '#24292E'" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  icongithub-fill "></i>
+      </a><a 
+        href="mailto:yinjingem@163.com "
+        target="_blank"
+        class="footer-social-item"
+        onMouseOver="this.style.color=#FF3B00" 
+        onMouseOut="this.style.color='#33333D'">
+          <i class="iconfont  iconmail"></i>
+      </a></div>
+  
+    <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Copyright© 2020 - 2021 <a target="_blank" href="https://github.com/yinj51/yin.github.io">Yin</a></p></div>
+  
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+  
+    <div class="scrollbar j-scrollbar">
+  <div class="scrollbar-current j-scrollbar-current"></div>
+</div>
+  
+  
+    
+<script src="/js/color-mode.js"></script>
+
+  
+</body>
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+  
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  <script>
+    (function () {
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      } else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
