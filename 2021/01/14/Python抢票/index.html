@@ -181,7 +181,7 @@
     <div class="head-info">
       <span class="post-info-item"><i class="iconfont iconcalendar"></i>January 14, 2021</span>
       
-      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2036</span>
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>2028</span>
     </div>
   </div>
 </section>
@@ -191,7 +191,8 @@
 <p>春运即将到来，抢票回家又该提上日程了！在 Github 上也有很多优秀的开发者开源了一些基于 Python 的抢票项目，比如一直很火的 12306/py12306，目前已经累计超 40k Star！</p>
 <p><img   class="lazyload" data-original="2.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
 <p>但如果你尝试使用，会发现由于 12306 的验证码机制升级，这两个项目的登陆模块都挂掉了，大概去年十月就已经不能使用。</p>
-<p>别慌，经过一番探索，我找到了一个还能完美使用的抢票项目，并联系到开发者@罐子里的茶呢，了解到只要对登陆模块的一些接口地址进行变更，以及对部分参数的获取逻辑进行调整，就能重新盘活 Python 抢票项目 12306，地址如下：<a target="_blank" rel="noopener" href="https://github.com/gzldc/12306">https://github.com/gzldc/12306</a></p>
+<p>别慌，经过一番探索，我找到了一个还能完美使用的抢票项目，并联系到开发者@罐子里的茶呢，了解到只要对登陆模块的一些接口地址进行变更，以及对部分参数的获取逻辑进行调整，就能重新盘活 Python 抢票项目 12306，地址如下：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/gzldc/12306">https://github.com/gzldc/12306</a></p>
 <p>本文就将基于该项目详细的指导大家如何快速使用 Python 抢票，顺利回家！开始之前我们需要了解一下整体抢票思路</p>
 <p><img   class="lazyload" data-original="3.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
 <h1 id="1，下载与依赖安装"><a href="#1，下载与依赖安装" class="headerlink" title="1，下载与依赖安装"></a>1，<strong>下载与依赖安装</strong></h1><p>运行本项目之前需要将你的 Python 升级到 Python3.6 或者更高版本。</p>
@@ -202,11 +203,8 @@
 <p>解压完的目录应该如下</p>
 <p><img   class="lazyload" data-original="5.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
 <p>之后启动终端/命令行(Mac/Win)，并 cd 进入项目目录，执行如下代码安装相关依赖</p>
-<ul>
-<li><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> -r requirements.txt<br></code></pre></td></tr></table></figure>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">pip <span class="hljs-keyword">install</span> -r requirements.txt<br></code></pre></td></tr></table></figure>
 <p>需要注意的是，如果下载速度过慢可以切换源来解决，亲测使用阿里云镜像是速度最快的：<a target="_blank" rel="noopener" href="https://mirrors.aliyun.com/pypi/simple">https://mirrors.aliyun.com/pypi/simple</a></p>
-</li>
-</ul>
 <p>关于安装各种库本文不是本文介绍的重点，总之 requirements.txt 中依赖库必须正确被安装，如果出现任何安装上的问题，请自行百度。</p>
 <h1 id="2，获取登陆信息"><a href="#2，获取登陆信息" class="headerlink" title="2，获取登陆信息"></a>2，<strong>获取登陆信息</strong></h1><p>之前我们说到，GitHub 排名第一第二的 12306 抢票项目挂掉的原因都是在登陆验证码没法处理上，但我们现在使用的项目并不是使用用户名与密码管理账户，只需要在登陆时提取自己账户的相关 cookie 字段即可，可以按照以下步骤进行。</p>
 <p>首先打开 12306 官网，进入登陆页面并按下 F12，并选择 Network</p>
@@ -223,17 +221,11 @@
 <p><img   class="lazyload" data-original="10.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
 <p>到这里我们就可以直接使用了，当然你还可以继续按照这个模版文件说明对 CDN 加速、代理 ip、抢票模式等设置进行调整，最后保存退出即可。</p>
 <h1 id="4，启动项目"><a href="#4，启动项目" class="headerlink" title="4，启动项目"></a>4，<strong>启动项目</strong></h1><p>最后让我们启动项目开始抢票，回到终端/命令行。执行如下代码开启 CDN 加速</p>
-<ul>
-<li><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> run.<span class="hljs-keyword">py</span> <span class="hljs-keyword">c</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> run.<span class="hljs-keyword">py</span> <span class="hljs-keyword">c</span><br></code></pre></td></tr></table></figure>
 <p><img   class="lazyload" data-original="11.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
-</li>
-</ul>
 <p>之后挂在后台，重新打开一个终端/命令行并进入项目目录，执行下面代码开始抢票</p>
-<ul>
-<li><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> run.<span class="hljs-keyword">py</span> r<br></code></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-keyword">python3</span> run.<span class="hljs-keyword">py</span> r<br></code></pre></td></tr></table></figure>
 <p><img   class="lazyload" data-original="12.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
-</li>
-</ul>
 <p>如上图所示，不出意外的话就会输出一大堆日志，我选择的是杭州去芜湖的票，因为有余票，所以就没有进入抢票模式，直接就下单待支付了</p>
 <p><img   class="lazyload" data-original="13.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==" ></p>
 <p>回到 12306，点开我的订单发现有一张票躺在那里待支付，说明一切从登陆到下单所有功能都是可以正常使用的！</p>
