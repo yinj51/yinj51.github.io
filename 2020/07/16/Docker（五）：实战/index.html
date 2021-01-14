@@ -59,7 +59,7 @@
     CONFIG = {
       isHome: false,
       fancybox: true,
-      pjax: false,
+      pjax: true,
       lazyload: {
         enable: true,
         only_post: 'false',
@@ -78,7 +78,7 @@
         always_show: false
       },
       carrier: {
-        enable: false
+        enable: true
       },
       daovoice: {
         enable: false
@@ -293,17 +293,43 @@
 
       </section>
       
+        <section class="comments">
+  
+    <div class="btn" id="comments-btn">查看评论</div>
+  
+  
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk" class="gitalk"></div>
+<script defer src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  window.onload = function () {
+    var gitalk = new Gitalk({
+      clientID: 'c64b46491ce1ad248270',
+      clientSecret: 'eca556f4a714ebaf8935af92bf79988b330f5796',
+      id: window.location.pathname,
+      repo: 'yinj51.github.io',
+      owner: 'yinj51',
+      admin: 'yinj51'
+    });
+    if ( true ) {
+      $("#comments-btn").on("click", function () {
+        $(this).hide();
+        gitalk.render('gitalk');
+      });
+    } else {
+      gitalk.render('gitalk');
+    }
+  }
+</script>
+
+</section>
+      
     </section>
   </div>
 </article></div>
       <div class="col-xl-3">
         
           
-  <aside class="toc-wrap">
-    <h3 class="toc-title">文章目录：</h3>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">一、数据卷</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-text">1.概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%80%89%E6%8B%A9-v-%E8%BF%98%E6%98%AF-%E2%80%93mount-%E5%8F%82%E6%95%B0"><span class="toc-text">2.选择 -v 还是 -–mount 参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">3.创建一个数据卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AA%E6%8C%82%E8%BD%BD%E6%95%B0%E6%8D%AE%E5%8D%B7%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-text">4.启动一个挂载数据卷的容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%8D%B7%E7%9A%84%E5%85%B7%E4%BD%93%E4%BF%A1%E6%81%AF"><span class="toc-text">5.查看数据卷的具体信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">6.删除数据卷</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Docker-%E6%9E%84%E5%BB%BA-Tomcat"><span class="toc-text">二、Docker 构建 Tomcat</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9F%A5%E6%89%BE-Docker-Hub-%E4%B8%8A%E7%9A%84-Tomcat-%E9%95%9C%E5%83%8F"><span class="toc-text">1.查找 Docker Hub 上的 Tomcat 镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%EF%BC%9A"><span class="toc-text">2.运行容器：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81Docker-%E6%9E%84%E5%BB%BA-MySQL"><span class="toc-text">三、Docker 构建 MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9F%A5%E6%89%BE-Docker-Hub-%E4%B8%8A%E7%9A%84-MySQL-%E9%95%9C%E5%83%8F"><span class="toc-text">1.查找 Docker Hub 上的 MySQL 镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%EF%BC%9A-1"><span class="toc-text">2.运行容器：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%83%A8%E7%BD%B2%E9%A1%B9%E7%9B%AE%E5%88%B0%E5%AE%B9%E5%99%A8"><span class="toc-text">四、部署项目到容器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81Docker-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">五、Docker 常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9F%A5%E7%9C%8B-Docker-%E7%89%88%E6%9C%AC"><span class="toc-text">1.查看 Docker 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%8E-Docker-%E6%96%87%E4%BB%B6%E6%9E%84%E5%BB%BA-Docker-%E6%98%A0%E5%83%8F"><span class="toc-text">2.从 Docker 文件构建 Docker 映像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BF%90%E8%A1%8C-Docker-%E6%98%A0%E5%83%8F"><span class="toc-text">3.运行 Docker 映像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8B%E5%8F%AF%E7%94%A8%E7%9A%84-Docker-%E6%98%A0%E5%83%8F"><span class="toc-text">4.查看可用的 Docker 映像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%9F%A5%E7%9C%8B%E6%9C%80%E8%BF%91%E7%9A%84%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">5.查看最近的运行容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E6%AD%A3%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-text">6.查看所有正在运行的容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%81%9C%E6%AD%A2%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="toc-text">7.停止运行容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E5%88%A0%E9%99%A4%E4%B8%80%E4%B8%AA%E9%95%9C%E5%83%8F"><span class="toc-text">8.删除一个镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E9%95%9C%E5%83%8F"><span class="toc-text">9.删除所有镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E9%95%9C%E5%83%8F"><span class="toc-text">10.强制删除所有镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E8%99%9A%E6%82%AC%E9%95%9C%E5%83%8F"><span class="toc-text">11.删除所有虚悬镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8"><span class="toc-text">12.删除所有容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E8%BF%9B%E5%85%A5-Docker-%E5%AE%B9%E5%99%A8"><span class="toc-text">13.进入 Docker 容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">14.查看所有数据卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E5%88%A0%E9%99%A4%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">15.删除指定数据卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E6%9C%AA%E5%85%B3%E8%81%94%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8D%B7"><span class="toc-text">16.删除所有未关联的数据卷</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-%E4%BB%8E%E4%B8%BB%E6%9C%BA%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%B0%E5%AE%B9%E5%99%A8"><span class="toc-text">17.从主机复制文件到容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-%E4%BB%8E%E5%AE%B9%E5%99%A8%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%E5%88%B0%E4%B8%BB%E6%9C%BA"><span class="toc-text">18.从容器复制文件到主机</span></a></li></ol></li></ol>
-  </aside>
-
         
       </div>
     </div>
@@ -381,6 +407,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
 
+
+
+  
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 
 
 

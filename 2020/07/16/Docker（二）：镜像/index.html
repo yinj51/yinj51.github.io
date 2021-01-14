@@ -59,7 +59,7 @@
     CONFIG = {
       isHome: false,
       fancybox: true,
-      pjax: false,
+      pjax: true,
       lazyload: {
         enable: true,
         only_post: 'false',
@@ -78,7 +78,7 @@
         always_show: false
       },
       carrier: {
-        enable: false
+        enable: true
       },
       daovoice: {
         enable: false
@@ -494,17 +494,43 @@
 
       </section>
       
+        <section class="comments">
+  
+    <div class="btn" id="comments-btn">查看评论</div>
+  
+  
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk" class="gitalk"></div>
+<script defer src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  window.onload = function () {
+    var gitalk = new Gitalk({
+      clientID: 'c64b46491ce1ad248270',
+      clientSecret: 'eca556f4a714ebaf8935af92bf79988b330f5796',
+      id: window.location.pathname,
+      repo: 'yinj51.github.io',
+      owner: 'yinj51',
+      admin: 'yinj51'
+    });
+    if ( true ) {
+      $("#comments-btn").on("click", function () {
+        $(this).hide();
+        gitalk.render('gitalk');
+      });
+    } else {
+      gitalk.render('gitalk');
+    }
+  }
+</script>
+
+</section>
+      
     </section>
   </div>
 </article></div>
       <div class="col-xl-3">
         
           
-  <aside class="toc-wrap">
-    <h3 class="toc-title">文章目录：</h3>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8-Docker-%E9%95%9C%E5%83%8F"><span class="toc-text">一、使用 Docker 镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%8E%B7%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-text">二、获取镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0"><span class="toc-text">1.概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%90%E8%A1%8C"><span class="toc-text">2.运行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%88%97%E5%87%BA%E9%95%9C%E5%83%8F"><span class="toc-text">三、列出镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0-1"><span class="toc-text">1.概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%95%9C%E5%83%8F%E4%BD%93%E7%A7%AF"><span class="toc-text">2.镜像体积</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%99%9A%E6%82%AC%E9%95%9C%E5%83%8F"><span class="toc-text">3.虚悬镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%AD%E9%97%B4%E5%B1%82%E9%95%9C%E5%83%8F"><span class="toc-text">4.中间层镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%97%E5%87%BA%E9%83%A8%E5%88%86%E9%95%9C%E5%83%8F"><span class="toc-text">5.列出部分镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BB%A5%E7%89%B9%E5%AE%9A%E6%A0%BC%E5%BC%8F%E6%98%BE%E7%A4%BA"><span class="toc-text">6.以特定格式显示</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F"><span class="toc-text">四、删除本地镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%A6%82%E8%BF%B0-2"><span class="toc-text">1.概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%94%A8-ID%E3%80%81%E9%95%9C%E5%83%8F%E5%90%8D%E3%80%81%E6%91%98%E8%A6%81%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="toc-text">2.用 ID、镜像名、摘要删除镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Untagged-%E5%92%8C-Deleted"><span class="toc-text">3.Untagged 和 Deleted</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%94%A8-docker-image-ls-%E5%91%BD%E4%BB%A4%E6%9D%A5%E9%85%8D%E5%90%88"><span class="toc-text">4.用 docker image ls 命令来配合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-CentOS-RHEL-%E7%9A%84%E7%94%A8%E6%88%B7%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E4%BA%8B%E9%A1%B9"><span class="toc-text">5.CentOS&#x2F;RHEL 的用户需要注意的事项</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%BD%BF%E7%94%A8-Dockerfile-%E5%AE%9A%E5%88%B6%E9%95%9C%E5%83%8F"><span class="toc-text">五、使用 Dockerfile 定制镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Dockerfile-%E5%AE%9A%E5%88%B6%E9%95%9C%E5%83%8F"><span class="toc-text">1.Dockerfile 定制镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-FROM-%E6%8C%87%E5%AE%9A%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F"><span class="toc-text">2.FROM 指定基础镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-RUN-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-text">3.RUN 执行命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-text">4.构建镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%95%9C%E5%83%8F%E6%9E%84%E5%BB%BA%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88Context%EF%BC%89"><span class="toc-text">5.镜像构建上下文（Context）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%85%B6%E5%AE%83-docker-build-%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-text">6.其它 docker build 的用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E7%9B%B4%E6%8E%A5%E7%94%A8-Git-repo-%E8%BF%9B%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">1）直接用 Git repo 进行构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E7%94%A8%E7%BB%99%E5%AE%9A%E7%9A%84-tar-%E5%8E%8B%E7%BC%A9%E5%8C%85%E6%9E%84%E5%BB%BA"><span class="toc-text">2）用给定的 tar 压缩包构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E4%BB%8E%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E4%B8%AD%E8%AF%BB%E5%8F%96-Dockerfile-%E8%BF%9B%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">3）从标准输入中读取 Dockerfile 进行构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E4%BB%8E%E6%A0%87%E5%87%86%E8%BE%93%E5%85%A5%E4%B8%AD%E8%AF%BB%E5%8F%96%E4%B8%8A%E4%B8%8B%E6%96%87%E5%8E%8B%E7%BC%A9%E5%8C%85%E8%BF%9B%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">4）从标准输入中读取上下文压缩包进行构建</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81Dockerfile-%E6%8C%87%E4%BB%A4"><span class="toc-text">六、Dockerfile 指令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-COPY"><span class="toc-text">1.COPY</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ADD"><span class="toc-text">2.ADD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-CMD"><span class="toc-text">3.CMD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ENTRYPOINT"><span class="toc-text">4.ENTRYPOINT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%9C%BA%E6%99%AF%E4%B8%80%EF%BC%9A%E8%AE%A9%E9%95%9C%E5%83%8F%E5%8F%98%E6%88%90%E5%83%8F%E5%91%BD%E4%BB%A4%E4%B8%80%E6%A0%B7%E4%BD%BF%E7%94%A8"><span class="toc-text">1）场景一：让镜像变成像命令一样使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E5%9C%BA%E6%99%AF%E4%BA%8C%EF%BC%9A%E5%BA%94%E7%94%A8%E8%BF%90%E8%A1%8C%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-text">2）场景二：应用运行前的准备工作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-ENV"><span class="toc-text">5.ENV</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-VOLUME"><span class="toc-text">6.VOLUME</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-EXPOSE"><span class="toc-text">7.EXPOSE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-WORKDIR"><span class="toc-text">8.WORKDIR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">9.参考文档</span></a></li></ol></li></ol>
-  </aside>
-
         
       </div>
     </div>
@@ -582,6 +608,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
 
+
+
+  
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 
 
 

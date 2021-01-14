@@ -59,7 +59,7 @@
     CONFIG = {
       isHome: false,
       fancybox: true,
-      pjax: false,
+      pjax: true,
       lazyload: {
         enable: true,
         only_post: 'false',
@@ -78,7 +78,7 @@
         always_show: false
       },
       carrier: {
-        enable: false
+        enable: true
       },
       daovoice: {
         enable: false
@@ -285,17 +285,43 @@
 
       </section>
       
+        <section class="comments">
+  
+    <div class="btn" id="comments-btn">查看评论</div>
+  
+  
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk" class="gitalk"></div>
+<script defer src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  window.onload = function () {
+    var gitalk = new Gitalk({
+      clientID: 'c64b46491ce1ad248270',
+      clientSecret: 'eca556f4a714ebaf8935af92bf79988b330f5796',
+      id: window.location.pathname,
+      repo: 'yinj51.github.io',
+      owner: 'yinj51',
+      admin: 'yinj51'
+    });
+    if ( true ) {
+      $("#comments-btn").on("click", function () {
+        $(this).hide();
+        gitalk.render('gitalk');
+      });
+    } else {
+      gitalk.render('gitalk');
+    }
+  }
+</script>
+
+</section>
+      
     </section>
   </div>
 </article></div>
       <div class="col-xl-3">
         
           
-  <aside class="toc-wrap">
-    <h3 class="toc-title">文章目录：</h3>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%AE%BF%E9%97%AE-Docker-%E4%BB%93%E5%BA%93"><span class="toc-text">一、访问 Docker 仓库</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Docker-Hub"><span class="toc-text">二、Docker Hub</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%B3%A8%E5%86%8C"><span class="toc-text">1.注册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%99%BB%E5%BD%95"><span class="toc-text">2.登录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-text">3.拉取镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%8E%A8%E9%80%81%E9%95%9C%E5%83%8F"><span class="toc-text">4.推送镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA"><span class="toc-text">5.自动创建</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81Docker-%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93"><span class="toc-text">三、Docker 私有仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85%E8%BF%90%E8%A1%8C-docker-registry"><span class="toc-text">1.安装运行 docker-registry</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C"><span class="toc-text">容器运行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9C%A8%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E4%B8%8A%E4%BC%A0%E3%80%81%E6%90%9C%E7%B4%A2%E3%80%81%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="toc-text">2.在私有仓库上传、搜索、下载镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-text">3.注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89Ubuntu-14-04-Debian-7-Wheezy"><span class="toc-text">1）Ubuntu 14.04, Debian 7 Wheezy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89Ubuntu-16-04-Debian-8-centos-7"><span class="toc-text">2）Ubuntu 16.04+, Debian 8+, centos 7</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%85%B6%E4%BB%96"><span class="toc-text">4.其他</span></a></li></ol></li></ol>
-  </aside>
-
         
       </div>
     </div>
@@ -373,6 +399,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
 
+
+
+  
+<script src="https://cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 
 
 
